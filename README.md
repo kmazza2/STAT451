@@ -1,1 +1,1 @@
-Assignments for UIC STAT451
+Assignments for UIC STAT 451
