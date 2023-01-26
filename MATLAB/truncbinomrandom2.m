@@ -16,12 +16,11 @@ varargin = cell2mat(varargin);
 m = prod(varargin);
 % rejection sampling begin
 x = zeros(1,m);
-c = n - k + 1;
 for i = 1:m
     while true
         y = unidrnd(n-k+1) + (k-1);
         u = rand();
-        if u < truncbinompdf(y,n,p,k) * (n-k+1) / c
+        if u < truncbinompdf(y,n,p,k)
             x(i) = y;
             break;
         end
