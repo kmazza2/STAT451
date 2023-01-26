@@ -1,1 +1,1 @@
-# STAT451
+Assignments for UIC STAT451
