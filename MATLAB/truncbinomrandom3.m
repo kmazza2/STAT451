@@ -14,9 +14,8 @@ if nargin == 3
 end
 varargin = cell2mat(varargin);
 m = prod(varargin);
-% rejection sampling begin
+% Bernoulli trials begin
 x = zeros(1,m);
-c = n - k + 1;
 for i = 1:m
     while true
         y = sum(rand(1,n) < p);
@@ -26,7 +25,7 @@ for i = 1:m
         end
     end
 end
-% rejection sampling end
+% Bernoulli trials end
 if nargin > 4
     x = reshape(x,varargin);
 end
