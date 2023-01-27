@@ -14,7 +14,8 @@ for i = 1:n
     while true
         y = rand();
         u = rand();
-        if u < 8 * 30*(y^2 - 2 * y^3 + y^4) / 15
+%        if u < 8 * 30*(y^2 - 2 * y^3 + y^4) / 15
+        if u < polyval([16 -32 16 0 0],y)
             x(i) = y;
             break;
         end
