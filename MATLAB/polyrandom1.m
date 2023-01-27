@@ -12,7 +12,7 @@ n = prod(varargin);
 x = zeros(1,n);
 for i = 1:n
     u = rand();
-    y = fzero(@(x) 10*x^3 - 15*x^4 + 6*x^5 - u, 0.5);
+    y = fzero(@(x) polyval([6 -15 10 0 0 -u],x), 0.5);
     x(i) = y;
 end
 % inverse transform end
