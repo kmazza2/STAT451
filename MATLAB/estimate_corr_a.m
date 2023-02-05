@@ -1,4 +1,6 @@
 function corr_hat = estimate_corr_a(samples)
+%ESTIMATE_CORR_A Estimates the correlation coefficient of U, Sqrt(1-U^2).
+%   Expectations are estimated by sample means.
     mu_hat_prod_a = estimate_mu_prod_a(samples);
     mu_hat_fac1_a = estimate_mu_fac1_a(samples);
     mu_hat_fac2_a = estimate_mu_fac2_a(samples);
