@@ -1,11 +1,3 @@
-samples = 100000;
-
-corr_hat_a = estimate_corr_a(samples);
-
-disp(corr_hat_a);
-
-
-
 function corr_hat = estimate_corr_a(samples)
     mu_hat_prod_a = estimate_mu_prod_a(samples);
     mu_hat_fac1_a = estimate_mu_fac1_a(samples);
