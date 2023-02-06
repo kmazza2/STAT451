@@ -34,3 +34,12 @@ verifyEqual(testCase, den4, 0.167357, "AbsTol", 0.01);
 verifyEqual(testCase, den5, 0.101147, "AbsTol", 0.01);
 verifyEqual(testCase, den6, 0.05046, "AbsTol", 0.01);
 end
+
+function test_nonhompoiss(testCase)
+samples = 1000000;
+sample = nonhompoiss(1, @(x) 23, 23, samples);
+mu_hat = mean(sample);
+sigma_sq_hat = var(sample);
+verifyEqual(testCase, mu_hat, 23, "AbsTol", 0.01);
+verifyEqual(testCase, sigma_sq_hat, 23, "AbsTol", 0.1);
+end
