@@ -1,5 +1,5 @@
 function [total_break_time] = server_break2(rand_interarrival, rand_service, rand_break, kill)
-%SERVER_BREAK2 Simulate singer server queue in HW 2 Problem 4.
+%SERVER_BREAK2 Simulate single server queue in HW 2 Problem 4.
 %   SERVER_BREAK2 begins with the server waiting for an arrival (not on
 %   break).
 
