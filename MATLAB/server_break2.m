@@ -1,5 +1,7 @@
-function [total_break_time] = server_break(rand_interarrival, rand_service, rand_break, kill)
-%SERVER_BREAK Simulate singer server queue in HW 2 Problem 4.
+function [total_break_time] = server_break2(rand_interarrival, rand_service, rand_break, kill)
+%SERVER_BREAK2 Simulate singer server queue in HW 2 Problem 4.
+%   SERVER_BREAK2 begins with the server waiting for an arrival (not on
+%   break).
 
 % Initialization
 end_process = 0;
@@ -7,23 +9,10 @@ total_break_time = 0;
 arrival = 0;
 queue = 0;
 
-break_time = rand_break();
-end_process = end_process + break_time;
-% If break ends after end of simulation, add only the part of the break
-% occurring before the end of the simulation to total_break_time.
-% Otherwise, can add all of the break time to total_break_time.
-if end_process >= kill
-    total_break_time = kill;
-    return;
-else
-    total_break_time = total_break_time + break_time;
-end
-
 arrival = arrival + rand_interarrival(arrival);
-while arrival <= end_process
-    queue = queue + 1;
-    arrival = arrival + rand_interarrival(arrival);
-end
+queue = queue + 1;
+end_process = arrival;
+arrival = arrival + rand_interarrival(arrival);
 
 while true
 
