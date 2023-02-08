@@ -43,3 +43,98 @@ sigma_sq_hat = var(sample);
 verifyEqual(testCase, mu_hat, 23, "AbsTol", 0.01);
 verifyEqual(testCase, sigma_sq_hat, 23, "AbsTol", 0.1);
 end
+
+function test_serverbreak1(testCase)
+
+    function [x] = rand_service()
+        x = exprnd(1/25);
+    end
+
+    function [x] = rand_break()
+        x = 0.3 * rand();
+    end
+
+    function intensity = intensity_function(t)
+        while t >= 10
+            t = t - 10;
+        end
+        if t <= 5
+            intensity = 3 * t + 4;
+        else
+            intensity = -3 * t + 34;
+        end
+    end
+
+    function time = rand_interarrival(t)
+        time = exprnd(1/intensity_function(t));
+    end
+
+x = linspace(0,100,1000000);
+y = arrayfun(@(x) intensity_function(x), x);
+subplot(1,2,1);
+plot(x,y);
+
+t = 0;
+z = zeros(1000,1);
+for i = 1:1000
+    t = t + rand_interarrival(t);
+    z(i) = t;
+end
+
+subplot(1,2,2);
+scatter(z,0.005*rand(1000,1)+zeros(1000,1));
+xlim([-10 110]);
+ylim([-0.1 0.1]);
+
+simulation = arrayfun( ...
+    @(x) server_break( ...
+    @(t) rand_interarrival(t), ...
+    @() rand_service(), ...
+    @() rand_break(), ...
+    100) ...
+    , 1:500 ...
+    );
+mu_hat = mean(simulation);
+verifyGreaterThan(testCase, mu_hat, 0);
+verifyLessThan(testCase, mu_hat, 100);
+
+end
+
+function test_serverbreak2(testCase)
+
+    function [x] = rand_service()
+        x = exprnd(1/25);
+    end
+
+    function [x] = rand_break()
+        x = 0.3 * rand();
+    end
+
+    function intensity = intensity_function(t)
+        while t >= 10
+            t = t - 10;
+        end
+        if t <= 5
+            intensity = 3 * t + 4;
+        else
+            intensity = -3 * t + 34;
+        end
+    end
+
+    function time = rand_interarrival(t)
+        time = exprnd(1/intensity_function(t));
+    end
+
+simulation = arrayfun( ...
+    @(x) server_break2( ...
+    @(t) rand_interarrival(t), ...
+    @() rand_service(), ...
+    @() rand_break(), ...
+    100) ...
+    , 1:500 ...
+    );
+
+mu_hat = mean(simulation);
+verifyEqual(testCase, mu_hat, 0.5554, "AbsTol", 0.01);
+
+end
