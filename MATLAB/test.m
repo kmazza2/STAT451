@@ -129,23 +129,6 @@ function test_serverbreak2(testCase)
         time = exprnd(1/intensity_function(t));
     end
 
-% x = linspace(0,100,1000000);
-% y = arrayfun(@(x) intensity_function(x), x);
-% subplot(1,2,1);
-% plot(x,y);
-% 
-% t = 0;
-% z = zeros(1000,1);
-% for i = 1:1000
-%     t = t + rand_interarrival(t);
-%     z(i) = t;
-% end
-% 
-% subplot(1,2,2);
-% scatter(z,0.005*rand(1000,1)+zeros(1000,1));
-% xlim([-10 110]);
-% ylim([-0.1 0.1]);
-
 simulation = arrayfun( ...
     @(x) server_break2( ...
     @(t) rand_interarrival(t), ...
