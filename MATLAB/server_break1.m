@@ -27,20 +27,17 @@ while arrival <= end_process
 end
 
 while true
-
     % Process queue
     while queue > 0
         end_process = end_process + rand_service();
         queue = queue - 1;
     end
-
-    % Generate arrivals
     if arrival <= end_process
+        % Generate arrivals
         while arrival <= end_process
             queue = queue + 1;
             arrival = arrival + rand_interarrival(arrival);
         end
-        
     else
         % Generate breaks
         while end_process < arrival
