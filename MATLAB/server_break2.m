@@ -29,8 +29,8 @@ while true
             arrival = arrival + rand_interarrival(arrival);
         end
 
-        % Generate breaks
     else
+        % Generate breaks
         while end_process < arrival
             break_time = rand_break();
             if end_process + break_time >= kill
