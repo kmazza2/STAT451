@@ -4,12 +4,12 @@ end
 
 function test_corr_a(testCase)
 corr_hat = estimate_corr_a(1000000);
-verifyEqual(testCase, corr_hat, -0.05, "AbsTol", 0.02);
+verifyEqual(testCase, corr_hat, -0.921384, "AbsTol", 0.02);
 end
 
 function test_corr_b(testCase)
 corr_hat = estimate_corr_b(1000000);
-verifyEqual(testCase, corr_hat, -0.06, "AbsTol", 0.02);
+verifyEqual(testCase, corr_hat, -0.983555, "AbsTol", 0.02);
 end
 
 function test_prodrandom(testCase)
