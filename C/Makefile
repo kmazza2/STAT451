@@ -8,10 +8,16 @@
 
 CC = clang
 CFLAGS = -O2 -Wall
-all: $(patsubst %.c, %.test, $(wildcard tests/*.c))
+all: main tests
+main:
+	$(CC) $(CFLAGS) -o bin/main src/main.c
+tests: $(patsubst %.c, %.test, $(wildcard tests/*.c))
 %.test : %.c Makefile
 	$(CC) $(CFLAGS) $< -o $@
 check:
-	@./test.sh
+	@tests/test.sh
+run:
+	@bin/main
 clean:
 	rm tests/*.test
+	rm bin/*
