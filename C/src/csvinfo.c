@@ -20,7 +20,7 @@ static int is_term(unsigned char c) {
 
 
 struct counts
-data_shape (char *argv)
+data_counts (char *argv)
 {
   FILE *fp;
   struct csv_parser p;
@@ -60,7 +60,6 @@ data_shape (char *argv)
   }
 
   fclose(fp);
-  printf("%s: %lu fields, %lu rows\n", argv, c.fields, c.rows);
 
   csv_free(&p);
   return c;
