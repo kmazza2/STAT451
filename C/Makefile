@@ -1,16 +1,13 @@
-#testsrc := $(wildcard tests/*.c)
-#make test: tests/%.o
-#	echo "hi"
-#tests/%.o: tests/%.c
-#	$(CC) $(CFLAGS) $(INCLUDES) -c $(input) -o $(output)
-#make check: $(testsrc)
-#	@echo ${testsrc}
-
 CC = clang
-CFLAGS = -O2 -Wall
+CFLAGS = -O3 -Wall
+LIBCSV = /Users/kevin/lib/libcsv
+LIBGSL = /Users/kevin/lib/gsl
+LIBCSV_FLAGS = -lcsv
+GSL_FLAGS = -lgsl -lgslblas -lm
 all: main tests
 main:
-	$(CC) $(CFLAGS) -o bin/main src/main.c
+	$(CC) $(CFLAGS) -I$(LIBCSV)/include -c -o src/csvinfo.o src/csvinfo.c
+	$(CC) -L$(LIBCSV)/lib -o bin/csvinfo src/csvinfo.o $(LIBCSV_FLAGS)
 tests: $(patsubst %.c, %.test, $(wildcard tests/*.c))
 %.test : %.c Makefile
 	$(CC) $(CFLAGS) $< -o $@
@@ -21,3 +18,4 @@ run:
 clean:
 	rm tests/*.test
 	rm bin/*
+	rm src/*.o
