@@ -20,7 +20,7 @@ static int is_term(unsigned char c) {
 
 
 struct counts
-data_shape (char *argv[])
+data_shape (char *argv)
 {
   FILE *fp;
   struct csv_parser p;
@@ -38,11 +38,9 @@ data_shape (char *argv[])
   csv_set_term_func(&p, is_term);
   csv_set_delim(&p, CSV_SPACE);
 
-  ++argv;
-
-  fp = fopen(*argv, "rb");
+  fp = fopen(argv, "rb");
   if (!fp) {
-    fprintf(stderr, "Failed to open %s: %s\n", *argv, strerror(errno));
+    fprintf(stderr, "Failed to open %s: %s\n", argv, strerror(errno));
     exit(EXIT_FAILURE);
   }
 
@@ -56,13 +54,13 @@ data_shape (char *argv[])
   csv_fini(&p, cb1, cb2, &c);
 
   if (ferror(fp)) {
-    fprintf(stderr, "Error while reading file %s\n", *argv);
+    fprintf(stderr, "Error while reading file %s\n", argv);
     fclose(fp);
     exit(EXIT_FAILURE);
   }
 
   fclose(fp);
-  printf("%s: %lu fields, %lu rows\n", *argv, c.fields, c.rows);
+  printf("%s: %lu fields, %lu rows\n", argv, c.fields, c.rows);
 
   csv_free(&p);
   return c;
