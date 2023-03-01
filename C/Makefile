@@ -13,7 +13,7 @@ csvinfo:
 	$(CC) $(CFLAGS) -I$(LIBCSV)/include -I$(INCLUDE) -c -o src/csvinfo.o src/csvinfo.c
 tests: $(patsubst %.c, %.test, $(wildcard tests/*.c))
 %.test : %.c Makefile
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(LIBCSV)/include -L$(LIBCSV)/lib $< src/csvinfo.o -o $@ $(LIBCSV_FLAGS)
 check:
 	@tests/test.sh
 run:
