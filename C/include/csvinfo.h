@@ -4,4 +4,4 @@ struct counts {
 };
 
 struct counts
-data_shape (char *argv);
+data_counts (char *argv);
