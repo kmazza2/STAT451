@@ -1,4 +1,5 @@
 #include "ucs_ftodm.h"
+#include "ucs_solve.h"
 #include "ucs_ftodv.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -9,11 +10,7 @@
 int main(void) {
 	gsl_matrix *A = ucs_ftodm("data/A2.dat", true);
 	gsl_vector *b = ucs_ftodv("data/b2.dat", true);
-	gsl_permutation *p = gsl_permutation_alloc(b->size);
-	gsl_vector *x = gsl_vector_alloc(b->size);
-	int s;
-	gsl_linalg_LU_decomp(A, p, &s);
-	gsl_linalg_LU_solve(A, p, b, x);
+	gsl_vector *x = ucs_solve(A, b);
 	const double eps = 0.001;
 	if (
 			fabs(gsl_vector_get(x,0) - 0.4310) > eps ||
@@ -23,7 +20,6 @@ int main(void) {
 	}
 	gsl_matrix_free(A);
 	gsl_vector_free(b);
-	gsl_permutation_free(p);
 	gsl_vector_free(x);
 	return EXIT_SUCCESS;
 }
