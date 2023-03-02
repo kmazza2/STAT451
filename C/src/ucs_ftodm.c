@@ -5,7 +5,6 @@
 #include <string.h>
 #include <math.h>
 #include <errno.h>
-#include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include "ucs_ftodm.h"
 
