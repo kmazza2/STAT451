@@ -12,6 +12,10 @@
 
 /* This either succeeds or crashes the program, so
    it can be used as though it always succeeds.    */
+/* This implementation may be inefficient. It may
+   be better to read the vector directly from file
+   but I have opted not to for the sake of time
+   and not duplicating code.                       */
 gsl_vector *ucs_ftodv(char* path, bool header) {
 	gsl_matrix *data = ucs_ftodm(path, header);
 	size_t length = gsl_matrix_column(data, 0).vector.size;
