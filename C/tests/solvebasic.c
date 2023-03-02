@@ -1,4 +1,4 @@
-#include "ucs_readfile.h"
+#include "ucs_ftodm.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,8 +6,8 @@
 #include <math.h>
 
 int main(void) {
-	gsl_matrix *A = ucs_readfile("data/A1.dat", false);
-	gsl_matrix *b_mat = ucs_readfile("data/b1.dat", false);
+	gsl_matrix *A = ucs_ftodm("data/A1.dat", false);
+	gsl_matrix *b_mat = ucs_ftodm("data/b1.dat", false);
 	gsl_vector_view b = gsl_matrix_column(b_mat, 0);
 	gsl_permutation *p = gsl_permutation_alloc(b.vector.size);
 	gsl_vector *x = gsl_vector_alloc(b.vector.size);
