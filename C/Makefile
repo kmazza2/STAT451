@@ -1,8 +1,6 @@
 CC = clang
 CFLAGS = -O3 -Wall
-LIBCSV = /Users/kevin/lib/libcsv
 GSL = /Users/kevin/lib/gsl
-LIBCSV_FLAGS = -lcsv
 INCLUDE = include
 GSL_FLAGS = -lgsl -lgslcblas -lm
 all: main tests
