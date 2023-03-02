@@ -10,7 +10,7 @@
 
 /* This either succeeds or crashes the program, so
    it can be used as though it always succeeds.    */
-gsl_matrix *ucs_readfile(char* path, bool header) {
+gsl_matrix *ucs_ftodm(char* path, bool header) {
 	FILE *stream;
 	char *line = NULL;
 	size_t len = 0;

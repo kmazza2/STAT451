@@ -4,14 +4,14 @@ GSL = /Users/kevin/lib/gsl
 INCLUDE = include
 GSL_FLAGS = -lgsl -lgslcblas -lm
 all: main tests
-main: ucs_readfile
+main: ucs_ftodm
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/main.o src/main.c
-	$(CC) -L$(GSL)/lib -o bin/main obj/main.o obj/ucs_readfile.o $(GSL_FLAGS)
-ucs_readfile:
-	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_readfile.o src/ucs_readfile.c
+	$(CC) -L$(GSL)/lib -o bin/main obj/main.o obj/ucs_ftodm.o $(GSL_FLAGS)
+ucs_ftodm:
+	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_ftodm.o src/ucs_ftodm.c
 tests: $(patsubst %.c, %.test, $(wildcard tests/*.c))
 %.test : %.c Makefile
-	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -L$(GSL)/lib $< obj/ucs_readfile.o -o $@ $(GSL_FLAGS)
+	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -L$(GSL)/lib $< obj/ucs_ftodm.o -o $@ $(GSL_FLAGS)
 check:
 	@./test.sh
 run:
