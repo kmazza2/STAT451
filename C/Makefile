@@ -1,4 +1,3 @@
-CC = clang
 CFLAGS = -O3 -Wall
 GSL = /Users/kevin/lib/gsl
 INCLUDE = include
