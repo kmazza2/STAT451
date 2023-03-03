@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include "ucs_iter_result.h"
 
-/* runs Newton-like method method on function with
-   first derivative d1 and second derivative d2    */
+/* runs Newton-like method on function with
+   first derivative d1 and second derivative d2 */
 struct ucs_iter_result ucs_newton_fisher(
 		gsl_vector *param,
 		size_t max_iter,
