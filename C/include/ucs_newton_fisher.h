@@ -1,3 +1,6 @@
+#ifndef __UCS_NEWTON_FISHER_H__
+#define __UCS_NEWTON_FISHER_H__
+
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <stdbool.h>
@@ -17,3 +20,5 @@ struct ucs_iter_result ucs_newton_fisher(
 		gsl_matrix *data,
 		bool verbose
 );
+
+#endif
