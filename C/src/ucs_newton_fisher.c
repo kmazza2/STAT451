@@ -5,7 +5,7 @@
 
 bool convergence_occurred(gsl_vector *, gsl_vector *, double, double);
 
-bool ucs_newton_fisher(
+struct ucs_iter_result ucs_newton_fisher(
 		gsl_vector *param,
                 size_t max_iter,
                 double epsabs,
@@ -15,15 +15,17 @@ bool ucs_newton_fisher(
                 const char *data,
 		bool verbose
 ) {
-	bool converged = false;
-	size_t iter = 0;
+	struct ucs_iter_result result = {
+		.converged = false,
+		.iter = 0,
+	};
 	gsl_vector *cur_param = gsl_vector_alloc(param->size);
 	gsl_vector_memcpy(cur_param, param);
 	gsl_vector *first_deriv = gsl_vector_alloc(param->size);
 	gsl_matrix *second_deriv = gsl_matrix_alloc(param->size, param->size);
 	gsl_vector *update = gsl_vector_alloc(param->size);
 	while (1) {
-		if (iter == max_iter) {
+		if (result.iter == max_iter) {
 			break;
 		}
 		d1(cur_param, first_deriv);
@@ -31,7 +33,7 @@ bool ucs_newton_fisher(
 		gsl_matrix_scale(second_deriv, -1);
 		ucs_solve(second_deriv, update, first_deriv);
 		gsl_vector_add(cur_param, update);
-		++iter;
+		++result.iter;
 		if (
 				convergence_occurred(
 					param,
@@ -40,7 +42,7 @@ bool ucs_newton_fisher(
 					epsrel
 				)
 		) {
-			converged = true;
+			result.converged = true;
 			break;
 		}
 		gsl_vector_memcpy(param, cur_param);
@@ -51,7 +53,7 @@ bool ucs_newton_fisher(
 	gsl_vector_free(first_deriv);
 	gsl_vector_free(update);
 	gsl_matrix_free(second_deriv);
-	return converged;
+	return result;
 }
 
 

@@ -12,7 +12,7 @@ void d2(gsl_vector *param, gsl_matrix *val) {
 int main(void) {
 	gsl_vector *init_guess = gsl_vector_alloc(1);
 	gsl_vector_set(init_guess, 0, 5);
-	bool converged = ucs_newton_fisher(
+	struct ucs_iter_result result = ucs_newton_fisher(
 		init_guess,
 		10000,
 		0.0001,
@@ -22,7 +22,7 @@ int main(void) {
 		"data/A1.dat",
 		false
 	);
-	if (!converged) {
+	if (!result.converged) {
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;

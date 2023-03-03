@@ -1,8 +1,9 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <stdbool.h>
+#include "ucs_iter_result.h"
 
-bool ucs_newton_fisher(
+struct ucs_iter_result ucs_newton_fisher(
 		gsl_vector *param,
 		size_t max_iter,
 		double epsabs,
