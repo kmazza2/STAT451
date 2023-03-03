@@ -1,5 +1,5 @@
 #include "ucs_newton_fisher.h"
-#include "sample/newton_fisher_d.h"
+#include "sample/newton_fisher_dummy.h"
 
 int main(void) {
 	int err = ucs_newton_fisher(
