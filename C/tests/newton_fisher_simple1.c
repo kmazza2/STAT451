@@ -9,10 +9,10 @@ void d2(gsl_vector *param, gsl_matrix *val) {
 }
 
 int main(void) {
-	gsl_vector *init_guess = gsl_vector_alloc(1);
-	gsl_vector_set(init_guess, 0, 5);
+	gsl_vector *param = gsl_vector_alloc(1);
+	gsl_vector_set(param, 0, 5);
 	struct ucs_iter_result result = ucs_newton_fisher(
-		init_guess,
+		param,
 		10000,
 		0.0001,
 		0.0001,
@@ -23,7 +23,7 @@ int main(void) {
 	);
 	if (
 			(!result.converged) ||
-			(gsl_vector_get(init_guess, 0) != 0)
+			(gsl_vector_get(param, 0) != 0)
 ) {
 		return EXIT_FAILURE;
 	}
