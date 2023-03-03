@@ -1,4 +1,4 @@
-cd ./tests
+cd ./test
 num_tests=$(ls -1 | grep '.test$' | wc -l | tr -d ' ')
 if [ ${num_tests} -ne 0 ]
 then
