@@ -1,0 +1,1 @@
+This code implements solutions to the problems in STAT 451 HW3. Run `make' to build, `make check' to run the tests, `make run' to execute a demo, `make clean' to remove build artifacts.
