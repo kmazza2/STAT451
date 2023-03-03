@@ -10,8 +10,10 @@ struct ucs_iter_result ucs_newton_fisher(
 		size_t max_iter,
 		double epsabs,
 		double epsrel,
-		void (*d1)(gsl_vector *param, gsl_vector *val),
-		void (*d2)(gsl_vector *param, gsl_matrix *val),
-		const char *data,
+		void (*d1)(gsl_vector *param, gsl_matrix *data,
+			gsl_vector *val),
+		void (*d2)(gsl_vector *param, gsl_matrix *data,
+			gsl_matrix *val),
+		gsl_matrix *data,
 		bool verbose
 );

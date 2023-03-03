@@ -10,9 +10,11 @@ struct ucs_iter_result ucs_newton_fisher(
                 size_t max_iter,
                 double epsabs,
                 double epsrel,
-                void (*d1)(gsl_vector *param, gsl_vector *val),
-                void (*d2)(gsl_vector *param, gsl_matrix *val),
-                const char *data,
+                void (*d1)(gsl_vector *param, gsl_matrix *data,
+			gsl_vector *val),
+                void (*d2)(gsl_vector *param, gsl_matrix *data,
+			gsl_matrix *val),
+                gsl_matrix *data,
 		bool verbose
 ) {
 	struct ucs_iter_result result = {
@@ -25,8 +27,8 @@ struct ucs_iter_result ucs_newton_fisher(
 	gsl_matrix *second_deriv = gsl_matrix_alloc(param->size, param->size);
 	gsl_vector *update = gsl_vector_alloc(param->size);
 	while (result.iter < max_iter) {
-		d1(next_param, first_deriv);
-		d2(next_param, second_deriv);
+		d1(next_param, data, first_deriv);
+		d2(next_param, data, second_deriv);
 		gsl_matrix_scale(second_deriv, -1);
 		ucs_solve(second_deriv, update, first_deriv);
 		gsl_vector_add(next_param, update);
