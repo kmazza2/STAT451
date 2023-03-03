@@ -53,8 +53,13 @@ int main(void) {
 		data,
 		false
 	);
-	gsl_vector_fprintf(stderr, param, "%f");
 	if (!result.converged) {
+		return EXIT_FAILURE;
+	}
+	if (
+			(fabs(gsl_vector_get(param, 0) - 3) > 0.3) ||
+			(fabs(gsl_vector_get(param, 1) - 1) > 0.3)
+	) {
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
