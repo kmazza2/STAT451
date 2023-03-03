@@ -21,7 +21,7 @@ bool ucs_newton_fisher(
 	gsl_vector_memcpy(cur_param, param);
 	gsl_vector *first_deriv = gsl_vector_alloc(param->size);
 	gsl_matrix *second_deriv = gsl_matrix_alloc(param->size, param->size);
-	gsl_vector *update;
+	gsl_vector *update = gsl_vector_alloc(param->size);
 	while (1) {
 		if (iter == max_iter) {
 			break;
@@ -29,9 +29,8 @@ bool ucs_newton_fisher(
 		d1(cur_param, first_deriv);
 		d2(cur_param, second_deriv);
 		gsl_matrix_scale(second_deriv, -1);
-		update = ucs_solve(second_deriv, first_deriv);
+		ucs_solve(second_deriv, update, first_deriv);
 		gsl_vector_add(cur_param, update);
-   		gsl_vector_free(update);
 		++iter;
 		if (
 				convergence_occurred(
@@ -50,6 +49,7 @@ bool ucs_newton_fisher(
 	gsl_vector_memcpy(param, cur_param);
 	gsl_vector_free(cur_param);
 	gsl_vector_free(first_deriv);
+	gsl_vector_free(update);
 	gsl_matrix_free(second_deriv);
 	return converged;
 }
