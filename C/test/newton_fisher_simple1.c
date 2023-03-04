@@ -26,9 +26,10 @@ int main(void)
 	);
 	if (
 			(!result.converged) ||
-			(gsl_vector_get(param, 0) != 0)
+			(gsl_vector_get(result.param, 0) != 0)
 ) {
 		return EXIT_FAILURE;
 	}
+	gsl_vector_free(result.param);
 	return EXIT_SUCCESS;
 }

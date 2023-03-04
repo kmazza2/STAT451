@@ -7,6 +7,7 @@
 struct ucs_iter_result {
 	bool converged;
 	size_t iter;
+	gsl_vector *param;
 };
 
 #endif
