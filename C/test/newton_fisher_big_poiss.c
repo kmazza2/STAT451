@@ -1,5 +1,6 @@
 #include "ucs_newton_fisher.h"
 #include "ucs_ftodm.h"
+#include "ucs_ftodv.h"
 #include <math.h>
 
 void d1(gsl_vector *param, gsl_matrix *data, gsl_vector *val)
@@ -42,9 +43,7 @@ void d2(gsl_vector *param, gsl_matrix *data, gsl_matrix *val)
 
 int main(void)
 {
-	gsl_vector *param = gsl_vector_alloc(2);
-	gsl_vector_set(param, 0, 4);
-	gsl_vector_set(param, 1, 0.5);
+	gsl_vector *param = ucs_ftodv("data/fakeoilspillsparam.dat", true);
 	gsl_matrix *data = ucs_ftodm("data/fakeoilspills.dat", true);
 	struct ucs_iter_result result = ucs_newton_fisher(
 		param,
