@@ -2,6 +2,7 @@
 #include "ucs_solve.h"
 #include <math.h>
 #include <float.h>
+#include <time.h>
 
 bool convergence_occurred(gsl_vector *, gsl_vector *, double, double);
 
@@ -18,9 +19,11 @@ struct ucs_iter_result ucs_newton_fisher(
 		bool verbose
 )
 {
+	clock_t start_clock = clock();
 	struct ucs_iter_result result = {
 		.converged = false,
 		.iter = 0,
+		.time = 0,
 		.param = gsl_vector_alloc(param->size),
 	};
 	gsl_vector_memcpy(result.param, param);
@@ -55,6 +58,8 @@ struct ucs_iter_result ucs_newton_fisher(
 	gsl_vector_free(first_deriv);
 	gsl_vector_free(update);
 	gsl_matrix_free(second_deriv);
+	clock_t end_clock = clock();
+	result.time = (end_clock - start_clock) / (double) CLOCKS_PER_SEC;
 	return result;
 }
 
