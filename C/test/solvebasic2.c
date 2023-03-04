@@ -7,7 +7,8 @@
 #include <gsl/gsl_linalg.h>
 #include <math.h>
 
-int main(void) {
+int main(void)
+{
 	gsl_matrix *A = ucs_ftodm("data/A2.dat", true);
 	gsl_vector *b = ucs_ftodv("data/b2.dat", true);
 	gsl_vector *x = gsl_vector_alloc(b->size);
