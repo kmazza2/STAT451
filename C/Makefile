@@ -20,7 +20,7 @@ test: $(patsubst %.c, %.test, $(wildcard test/*.c))
 check:
 	@tool/test.sh
 run:
-	@bin/p1_newton data/oilspills.dat data/oilspillsparam.dat
+	@bin/p1_newton data/oilspillsparam.dat data/oilspills.dat
 clean:
 	rm test/*.test
 	rm bin/*

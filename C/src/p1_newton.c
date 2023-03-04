@@ -43,8 +43,8 @@ void d2(gsl_vector *param, gsl_matrix *data, gsl_matrix *val)
 
 int main(int argc, char *argv[])
 {
-	gsl_matrix *data = ucs_ftodm(argv[1], true);
-	gsl_vector *param = ucs_ftodv(argv[2], true);
+	gsl_vector *param = ucs_ftodv(argv[1], true);
+	gsl_matrix *data = ucs_ftodm(argv[2], true);
 	struct ucs_iter_result result = ucs_newton_fisher(
 		param,
 		10000,
