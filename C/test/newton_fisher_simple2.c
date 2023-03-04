@@ -28,5 +28,6 @@ int main(void)
 	if (!result.converged) {
 		return EXIT_FAILURE;
 	}
+	gsl_vector_free(result.param);
 	return EXIT_SUCCESS;
 }

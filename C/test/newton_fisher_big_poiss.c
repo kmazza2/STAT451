@@ -60,10 +60,11 @@ int main(void)
 		return EXIT_FAILURE;
 	}
 	if (
-			(fabs(gsl_vector_get(param, 0) - 3) > 0.3) ||
-			(fabs(gsl_vector_get(param, 1) - 1) > 0.3)
+			(fabs(gsl_vector_get(result.param, 0) - 3) > 0.3) ||
+			(fabs(gsl_vector_get(result.param, 1) - 1) > 0.3)
 	) {
 		return EXIT_FAILURE;
 	}
+	gsl_vector_free(result.param);
 	return EXIT_SUCCESS;
 }

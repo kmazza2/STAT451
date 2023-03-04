@@ -21,12 +21,14 @@ struct ucs_iter_result ucs_newton_fisher(
 	struct ucs_iter_result result = {
 		.converged = false,
 		.iter = 0,
+		.param = gsl_vector_alloc(param->size),
 	};
-	gsl_vector *next_param = gsl_vector_alloc(param->size);
-	gsl_vector_memcpy(next_param, param);
-	gsl_vector *first_deriv = gsl_vector_alloc(param->size);
-	gsl_matrix *second_deriv = gsl_matrix_alloc(param->size, param->size);
-	gsl_vector *update = gsl_vector_alloc(param->size);
+	gsl_vector_memcpy(result.param, param);
+	gsl_vector *next_param = gsl_vector_alloc(result.param->size);
+	gsl_vector_memcpy(next_param, result.param);
+	gsl_vector *first_deriv = gsl_vector_alloc(result.param->size);
+	gsl_matrix *second_deriv = gsl_matrix_alloc(result.param->size, result.param->size);
+	gsl_vector *update = gsl_vector_alloc(result.param->size);
 	while (result.iter < max_iter) {
 		d1(next_param, data, first_deriv);
 		d2(next_param, data, second_deriv);
@@ -36,7 +38,7 @@ struct ucs_iter_result ucs_newton_fisher(
 		++result.iter;
 		if (
 				convergence_occurred(
-					param,
+					result.param,
 					next_param,
 					epsabs,
 					epsrel
@@ -45,10 +47,10 @@ struct ucs_iter_result ucs_newton_fisher(
 			result.converged = true;
 			break;
 		}
-		gsl_vector_memcpy(param, next_param);
+		gsl_vector_memcpy(result.param, next_param);
 	}
 	/* Return final value to user in param, even if no convergence */
-	gsl_vector_memcpy(param, next_param);
+	gsl_vector_memcpy(result.param, next_param);
 	gsl_vector_free(next_param);
 	gsl_vector_free(first_deriv);
 	gsl_vector_free(update);
