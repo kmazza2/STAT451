@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 	gsl_vector_fprintf(stderr, param, "%f");
 	fprintf(stderr, "Converged: %d\n", result.converged);
 	fprintf(stderr, "Iterations: %zu\n", result.iter);
+	fprintf(stderr, "Time: %.20f sec\n", result.time);
 	fprintf(stderr, "Estimate: \n");
 	gsl_vector_fprintf(stdout, result.param, "%f");
 	gsl_vector_free(param);
