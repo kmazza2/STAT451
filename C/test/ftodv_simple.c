@@ -2,7 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-int main(void) {
+int main(void)
+{
 	gsl_vector *data = ucs_ftodv("data/b1.dat", false);
 	if (
 		(gsl_vector_get(data,0) != 4) ||

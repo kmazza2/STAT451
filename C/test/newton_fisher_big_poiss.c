@@ -2,7 +2,8 @@
 #include "ucs_ftodm.h"
 #include <math.h>
 
-void d1(gsl_vector *param, gsl_matrix *data, gsl_vector *val) {
+void d1(gsl_vector *param, gsl_matrix *data, gsl_vector *val)
+{
 	double d1_1 = 0;
 	double d1_2 = 0;
 	double a1 = gsl_vector_get(param, 0);
@@ -18,7 +19,8 @@ void d1(gsl_vector *param, gsl_matrix *data, gsl_vector *val) {
 	gsl_vector_set(val, 1, d1_2);
 }
 
-void d2(gsl_vector *param, gsl_matrix *data, gsl_matrix *val) {
+void d2(gsl_vector *param, gsl_matrix *data, gsl_matrix *val)
+{
 	double d2_1_1 = 0;
 	double d2_1_2 = 0;  /* d2_2_1 == d2_1_2 */
 	double d2_2_2 = 0;
@@ -38,7 +40,8 @@ void d2(gsl_vector *param, gsl_matrix *data, gsl_matrix *val) {
 	gsl_matrix_set(val, 1, 1, d2_2_2);
 }
 
-int main(void) {
+int main(void)
+{
 	gsl_vector *param = gsl_vector_alloc(2);
 	gsl_vector_set(param, 0, 4);
 	gsl_vector_set(param, 1, 0.5);

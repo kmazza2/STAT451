@@ -16,7 +16,8 @@ struct ucs_iter_result ucs_newton_fisher(
 			gsl_matrix *val),
                 gsl_matrix *data,
 		bool verbose
-) {
+)
+{
 	struct ucs_iter_result result = {
 		.converged = false,
 		.iter = 0,
@@ -61,7 +62,8 @@ bool convergence_occurred(
 		gsl_vector *next_param,
 		double epsabs,
 		double epsrel
-) {
+)
+{
 	double abs_diff;
 	for (int i = 0; i < param->size; ++i) {
 		double param_i = gsl_vector_get(param, i);
