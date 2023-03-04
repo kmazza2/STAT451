@@ -1,1 +1,7 @@
 This code implements solutions to the problems in STAT 451 HW3. Run `make' to build, `make check' to run the tests, `make run' to execute a demo, `make clean' to remove build artifacts.
+
+A Dockerfile is provided so that this code can be run on any system. To create and enter the container:
+```
+docker build -t ucs .
+docker run -it ucs
+```
