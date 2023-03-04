@@ -1,5 +1,6 @@
 #include "ucs_newton_fisher.h"
 #include "ucs_ftodm.h"
+#include "ucs_ftodv.h"
 #include <math.h>
 
 void d1(gsl_vector *param, gsl_matrix *data, gsl_vector *val)
@@ -40,12 +41,10 @@ void d2(gsl_vector *param, gsl_matrix *data, gsl_matrix *val)
 	gsl_matrix_set(val, 1, 1, d2_2_2);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-	gsl_vector *param = gsl_vector_alloc(2);
-	gsl_vector_set(param, 0, 4);
-	gsl_vector_set(param, 1, 0.5);
-	gsl_matrix *data = ucs_ftodm("data/fakeoilspills.dat", true);
+	gsl_vector *param = ucs_ftodv(argv[2], true);
+	gsl_matrix *data = ucs_ftodm(argv[1], true);
 	struct ucs_iter_result result = ucs_newton_fisher(
 		param,
 		10000,
@@ -56,17 +55,14 @@ int main(void)
 		data,
 		false
 	);
-	if (!result.converged) {
-		return EXIT_FAILURE;
-	}
-	if (
-			(fabs(gsl_vector_get(result.param, 0) - 3) > 0.3) ||
-			(fabs(gsl_vector_get(result.param, 1) - 1) > 0.3)
-	) {
-		return EXIT_FAILURE;
-	}
+	fprintf(stderr, "Initial guess: \n");
+	gsl_vector_fprintf(stderr, param, "%f");
+	fprintf(stderr, "Converged: %d\n", result.converged);
+	fprintf(stderr, "Iterations: %zu\n", result.iter);
+	fprintf(stderr, "Estimate: \n");
+	gsl_vector_fprintf(stdout, result.param, "%f");
 	gsl_vector_free(param);
-	gsl_vector_free(result.param);
 	gsl_matrix_free(data);
+	gsl_vector_free(result.param);
 	return EXIT_SUCCESS;
 }
