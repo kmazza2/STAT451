@@ -9,7 +9,7 @@
 
 /* This either succeeds or crashes the program, so
    it can be used as though it always succeeds.    */
-gsl_vector *ucs_ftodv(char* path, bool header)
+gsl_vector *ucs_ftodv(char *path, bool header)
 {
 	FILE *stream;
 	char *line = NULL;
