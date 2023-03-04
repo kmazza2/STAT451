@@ -17,7 +17,7 @@ gsl_matrix *ucs_ftodm(char* path, bool header)
 	ssize_t nread;
 	bool read_header = header ? false : true;
 	char *token;
-	char *endptr;
+	char *end = NULL;
 	double num;
 	size_t num_cols = 0;
 	size_t num_records = 0;
@@ -30,6 +30,10 @@ gsl_matrix *ucs_ftodm(char* path, bool header)
 	while ((nread = getline(&line, &len, stream)) != -1) {
 		if (header && !read_header) {
 			token = strtok(line, " ");
+			if (token == NULL) {
+				perror("malformed file");
+				exit(EXIT_FAILURE);
+			}
 			do {
 				++num_cols;
 			} while ((token = strtok(NULL, " ")));
@@ -38,6 +42,10 @@ gsl_matrix *ucs_ftodm(char* path, bool header)
 		}
 		size_t num_fields_line = 0;
 		token = strtok(line, " ");
+		if (token == NULL) {
+			perror("malformed file");
+			exit(EXIT_FAILURE);
+		}
 		do {
 			if (!header && num_records == 0) {
 				++num_cols;
@@ -68,17 +76,19 @@ gsl_matrix *ucs_ftodm(char* path, bool header)
 		}
 		token = strtok(line, " ");
 		do {
-			if (token != endptr) {
-				num =
-					(
-						!strcmp(token, "NA") ||
-						!strcmp(token, "NA\n")
-					) ?
-					NAN :
-					strtod(token, &endptr);
-				gsl_matrix_set(data, i, j, num);
-				++j;
+			num =
+				(
+					!strcmp(token, "NA") ||
+					!strcmp(token, "NA\n")
+				) ?
+				NAN :
+				strtod(token, &end);
+			if (token == end) {
+				perror("malformed record");
+				exit(EXIT_FAILURE);
 			}
+			gsl_matrix_set(data, i, j, num);
+			++j;
 		} while ((token = strtok(NULL, " ")));
 		j = 0;
 		++i;
