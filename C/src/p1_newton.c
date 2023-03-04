@@ -1,7 +1,7 @@
 #include "ucs_newton_fisher.h"
 #include "ucs_ftodm.h"
 #include "ucs_ftodv.h"
-#include "ucs_poiss_d.h"
+#include "ucs_poiss_newton.h"
 #include <math.h>
 
 int main(int argc, char *argv[])
