@@ -1,27 +1,4 @@
-ll <- function (param, data) {
-	N <- as.matrix(data[c('spills')])
-	b <- as.matrix(data[c('importexport', 'domestic')])
-	log_mean <- b %*% param
-	if(any(log_mean <= 0)) {
-		return (-Inf)
-	} else {
-		return(matrix(c(
-			(t(N) %*% log(log_mean)) -
-			param[1] * sum(b[,1]) -
-			param[2] * sum(b[,2])
-	)))
-	}
-}
-
-d1 <- function (param, data) {
-	N <- as.matrix(data[c('spills')])
-	b <- as.matrix(data[c('importexport', 'domestic')])
-	return(matrix(c(
-		b[,1] %*% (N * (b %*% param)^(-1) - 1),
-		b[,2] %*% (N * (b %*% param)^(-1) - 1)
-	)))
-}
-
+source("poiss.R")
 
 data_path <- "../C/data/oilspills.dat"
 param_path <- "../C/test/data/fakeoilspillsparam.dat"
