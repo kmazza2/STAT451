@@ -15,10 +15,14 @@ void ll(gsl_vector *param, gsl_matrix *data, double *val)
 	double b12 = gsl_matrix_get(data, 0, 3);
 	double b21 = gsl_matrix_get(data, 1, 2);
 	double b22 = gsl_matrix_get(data, 1, 3);
-	*val = n1 * log(a1 * b11 + a2 * b12) +
-		n2 * log(a1 * b21 + a2 * b22) -
-		a1 * (b11 + b21) -
-		a2 * (b12 + b22);
+	if (a1 * b11 + a2 * b12 <= 0 || a1 * b21 + a2 * b22 <= 0) {
+		 *val = -INFINITY;
+	} else {
+		*val = n1 * log(a1 * b11 + a2 * b12) +
+			n2 * log(a1 * b21 + a2 * b22) -
+			a1 * (b11 + b21) -
+			a2 * (b12 + b22);
+	}
 }
 
 void d1(gsl_vector *param, gsl_matrix *data, gsl_vector *val)

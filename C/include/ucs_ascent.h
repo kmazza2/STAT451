@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "ucs_iter_result.h"
 
+/* ll must never return NaN */
 struct ucs_iter_result ucs_ascent(
 		gsl_vector *param,
 		size_t max_iter,

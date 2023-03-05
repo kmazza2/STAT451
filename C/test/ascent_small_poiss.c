@@ -8,7 +8,7 @@ int main(void)
 	gsl_vector *param = gsl_vector_alloc(2);
 	gsl_vector_set(param, 0, 3);
 	gsl_vector_set(param, 1, 1);
-	gsl_matrix *data = ucs_ftodm("data/smallfakeoilspills.dat", true);
+	gsl_matrix *data = ucs_ftodm("../data/oilspills.dat", true);
 	struct ucs_iter_result result = ucs_ascent(
 		param,
 		10000,
@@ -19,6 +19,7 @@ int main(void)
 		data,
 		false
 	);
+	return EXIT_FAILURE;  /* The implementation is broken. See R code. */
 	if (!result.converged) {
 		return EXIT_FAILURE;
 	}
