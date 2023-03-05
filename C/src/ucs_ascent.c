@@ -4,6 +4,8 @@
 #include <float.h>
 #include <time.h>
 
+double norm(gsl_vector *param);
+
 struct ucs_iter_result ucs_ascent(
 		gsl_vector *param,
                 size_t max_iter,
@@ -36,11 +38,11 @@ struct ucs_iter_result ucs_ascent(
 	while (result.iter < max_iter) {
 		d1(result.param, data, first_deriv);
 		ll(result.param, data, &ll2);
-		for(;;) {
+		while(norm(first_deriv) >= epsabs) {
 			gsl_vector_memcpy(next_param, result.param);
 			gsl_vector_add(next_param, first_deriv);
 			ll(next_param, data, &ll1);
-			if (ll1 >= ll2) {
+			if (ll1 > ll2) {
 				break;
 			}
 			gsl_vector_scale(first_deriv, 1.0/2.0);
@@ -57,9 +59,6 @@ struct ucs_iter_result ucs_ascent(
 			result.converged = true;
 			break;
 		}
-		if (ll1 == ll2) {
-			break;
-		}
 		gsl_vector_memcpy(result.param, next_param);
 	}
 	/* Return final value to user in param, even if no convergence */
@@ -69,4 +68,13 @@ struct ucs_iter_result ucs_ascent(
 	clock_t end_clock = clock();
 	result.time = (end_clock - start_clock) / (double) CLOCKS_PER_SEC;
 	return result;
+}
+
+double norm(gsl_vector *param)
+{
+	double result = 0;
+	for (int i = 0; i < param->size; ++i) {
+		result += pow(gsl_vector_get(param, i), 2);
+	}
+	return sqrt(result);
 }
