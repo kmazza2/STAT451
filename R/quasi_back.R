@@ -56,7 +56,7 @@ posdef <- function(X) {
 
 
 data_path <- "../C/data/oilspills.dat"
-param_path <- "../C/test/data/oilspillsparamexact.dat"
+param_path <- "../C/test/data/fakeoilspillsparam.dat"
 max_iter <- 10000
 epsabs <- 0.01
 
@@ -79,7 +79,14 @@ for(iter in seq(max_iter)) {
 	# if c_recip is 0, don't change M
 	if(c_recip != 0) {
 		c <- 1 / c_recip
-		M <- M + c[1]  * (v %*% t(v))
+		candidate <- M + c[1]  * (v %*% t(v))
+		while(c > 0 && !posdef(candidate)) {
+			c <- c / 2
+			candidate <- M + c[1]  * (v %*% t(v))
+		}
+		if(c > 0) {
+			M <- candidate
+		}
 	}
 	# and set param to next_param
 	param <- next_param
