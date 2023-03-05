@@ -1,10 +1,9 @@
 #include "ucs_ascent.h"
+#include "ucs_norm.h"
 #include "ucs_convergence.h"
 #include <math.h>
 #include <float.h>
 #include <time.h>
-
-double norm(gsl_vector *param);
 
 struct ucs_iter_result ucs_ascent(
 		gsl_vector *param,
@@ -68,13 +67,4 @@ struct ucs_iter_result ucs_ascent(
 	clock_t end_clock = clock();
 	result.time = (end_clock - start_clock) / (double) CLOCKS_PER_SEC;
 	return result;
-}
-
-double norm(gsl_vector *param)
-{
-	double result = 0;
-	for (int i = 0; i < param->size; ++i) {
-		result += pow(gsl_vector_get(param, i), 2);
-	}
-	return sqrt(result);
 }

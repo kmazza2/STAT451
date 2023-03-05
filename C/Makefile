@@ -9,9 +9,9 @@ p1_newton: ucs_ftodm ucs_ftodv ucs_solve ucs_newton_fisher ucs_convergence
 p1_fisher: ucs_ftodm ucs_ftodv ucs_solve ucs_newton_fisher ucs_convergence
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/p1_fisher.o src/p1_fisher.c
 	$(CC) -L$(GSL)/lib -o bin/p1_fisher obj/p1_fisher.o obj/ucs_ftodm.o obj/ucs_ftodv.o obj/ucs_solve.o obj/ucs_newton_fisher.o obj/ucs_convergence.o $(GSL_FLAGS)
-p1_ascent: ucs_ftodm ucs_ftodv ucs_ascent ucs_convergence
+p1_ascent: ucs_ftodm ucs_ftodv ucs_ascent ucs_convergence ucs_norm
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/p1_ascent.o src/p1_ascent.c
-	$(CC) -L$(GSL)/lib -o bin/p1_ascent obj/p1_ascent.o obj/ucs_ftodm.o obj/ucs_ftodv.o obj/ucs_ascent.o obj/ucs_convergence.o $(GSL_FLAGS)
+	$(CC) -L$(GSL)/lib -o bin/p1_ascent obj/p1_ascent.o obj/ucs_ftodm.o obj/ucs_ftodv.o obj/ucs_ascent.o obj/ucs_convergence.o obj/ucs_norm.o $(GSL_FLAGS)
 ucs_ftodm:
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_ftodm.o src/ucs_ftodm.c
 ucs_ftodv:
@@ -20,13 +20,15 @@ ucs_solve:
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_solve.o src/ucs_solve.c
 ucs_convergence:
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_convergence.o src/ucs_convergence.c
+ucs_norm:
+	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_norm.o src/ucs_norm.c
 ucs_newton_fisher:
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_newton_fisher.o src/ucs_newton_fisher.c
 ucs_ascent:
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -c -o obj/ucs_ascent.o src/ucs_ascent.c
 test: $(patsubst %.c, %.test, $(wildcard test/*.c))
 %.test : %.c Makefile
-	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -L$(GSL)/lib $< obj/ucs_ftodm.o obj/ucs_ftodv.o obj/ucs_solve.o obj/ucs_newton_fisher.o obj/ucs_ascent.o obj/ucs_convergence.o -o $@ $(GSL_FLAGS)
+	$(CC) $(CFLAGS) -I$(INCLUDE) -I$(GSL)/include -L$(GSL)/lib $< obj/ucs_ftodm.o obj/ucs_ftodv.o obj/ucs_solve.o obj/ucs_newton_fisher.o obj/ucs_ascent.o obj/ucs_convergence.o obj/ucs_norm.o -o $@ $(GSL_FLAGS)
 check:
 	@tool/test.sh
 run:
