@@ -25,10 +25,11 @@ d1 <- function (param, data) {
 
 data_path <- "../C/data/oilspills.dat"
 param_path <- "../C/test/data/fakeoilspillsparam.dat"
-data <- read.table(data_path, header=TRUE, sep=" ")
-param <- as.matrix(read.table(param_path, header=TRUE, sep=" "))
 max_iter <- 10000
 epsabs <- 0.01
+
+data <- read.table(data_path, header=TRUE, sep=" ")
+param <- as.matrix(read.table(param_path, header=TRUE, sep=" "))
 converged <- FALSE
 for(iter in seq(max_iter)) {
 	derivative <- d1(param, data)
