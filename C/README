@@ -5,3 +5,5 @@ A Dockerfile is provided so that this code can be run on any system. To create a
 docker build -t ucs .
 docker run -it ucs
 ```
+
+The function ucs_ascent is broken. Do not use it.
