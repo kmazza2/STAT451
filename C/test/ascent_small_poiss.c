@@ -19,7 +19,6 @@ int main(void)
 		data,
 		false
 	);
-	gsl_vector_fprintf(stderr, result.param, "%f");  /* DEBUG */
 	if (!result.converged) {
 		return EXIT_FAILURE;
 	}
