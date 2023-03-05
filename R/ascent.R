@@ -31,6 +31,7 @@ epsabs <- 0.01
 data <- read.table(data_path, header=TRUE, sep=" ")
 param <- as.matrix(read.table(param_path, header=TRUE, sep=" "))
 converged <- FALSE
+start_time <- proc.time()
 for(iter in seq(max_iter)) {
 	derivative <- d1(param, data)
 	likelihood <- ll(param, data)
@@ -48,4 +49,5 @@ for(iter in seq(max_iter)) {
 	}
 	param <- next_param
 }
-cat("Converged: ", converged, "\nIterations: ", iter, "\nValue: ", next_param, "\n")
+end_time <- proc.time()
+cat("Converged: ", converged, "\nIterations: ", iter, "\nTime: ", (end_time - start_time)[3], "s\nValue: ", next_param, "\n")
