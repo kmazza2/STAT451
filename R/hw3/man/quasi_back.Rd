@@ -1,16 +1,14 @@
-\name{newton}
-\alias{newton}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{quasi_back}
+\alias{quasi_back}
 \title{
-newton
+quasi_back
 }
 \description{
-Finds local maximum of function with derivatives d1, d2.
+Finds MLE of distribution with log likelihood derivative d1, information matrix I. This implementation uses backtracking.
 }
 \usage{
-newton(data_path, param_path, d1, d2, max_iter, epsabs)
+quasi_back(data_path, param_path, d1, I, max_iter, epsabs)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data_path}{
 path to data (will be provided to d1, d2); MUST contain a header
@@ -21,8 +19,8 @@ path to initial guess; MUST contain a header
   \item{d1}{
 function d1(param, data) giving first derivative @ param using data
 }
-  \item{d2}{
-function d2(param, data) giving second derivative @ param using data
+  \item{I}{
+function I(param, data) giving information matrix @ param using data
 }
   \item{max_iter}{
 maximum iterations
