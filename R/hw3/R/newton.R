@@ -1,4 +1,4 @@
-newton <- function (data_path, param_path, max_iter, epsabs) {
+newton <- function (data_path, param_path, d1, d2, max_iter, epsabs) {
 	data <- read.table(data_path, header=TRUE, sep=" ")
 	param <- as.matrix(read.table(param_path, header=TRUE, sep=" "))
 	converged <- FALSE
@@ -15,11 +15,12 @@ newton <- function (data_path, param_path, max_iter, epsabs) {
 		param <- next_param
 	}
 	end_time <- proc.time()
-	cat(
-		"Converged: ", converged,
-		"\nIterations: ", iter,
-		"\nTime: ", (end_time - start_time)[3],
-		"s\nValue: ", next_param,
-		"\n"
+	return(
+		c(
+			converged=converged,
+			iter=iter,
+			time=(end_time - start_time)[3],
+			param=next_param
+		)
 	)
 }
