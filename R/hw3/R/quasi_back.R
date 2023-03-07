@@ -1,4 +1,7 @@
 quasi_back <- function (data_path, param_path, d1, I, max_iter, epsabs) {
+	posdef <- function(X) {
+	        return(all(eigen(X, only.values=TRUE)$values > 0))
+	}
 	data <- read.table(data_path, header=TRUE, sep=" ")
 	param <- as.matrix(read.table(param_path, header=TRUE, sep=" "))
 	converged <- FALSE
