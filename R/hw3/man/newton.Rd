@@ -1,6 +1,5 @@
 \name{newton}
 \alias{newton}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 newton
 }
@@ -10,7 +9,6 @@ Finds local extremum of function with derivatives d1, d2.
 \usage{
 newton(data_path, param_path, d1, d2, max_iter, epsabs)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data_path}{
 path to data (will be provided to d1, d2); MUST contain a header

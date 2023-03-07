@@ -1,16 +1,14 @@
-\name{newton}
-\alias{newton}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{ascent}
+\alias{ascent}
 \title{
-newton
+ascent
 }
 \description{
-Finds local maximum of function with derivatives d1, d2.
+Finds local maximum of function with derivative d1, log likelihood ll.
 }
 \usage{
-newton(data_path, param_path, d1, d2, max_iter, epsabs)
+ascent(data_path, param_path, d1, ll, max_iter, epsabs)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data_path}{
 path to data (will be provided to d1, d2); MUST contain a header
@@ -21,8 +19,8 @@ path to initial guess; MUST contain a header
   \item{d1}{
 function d1(param, data) giving first derivative @ param using data
 }
-  \item{d2}{
-function d2(param, data) giving second derivative @ param using data
+  \item{ll}{
+function ll(param, data) giving log likelihood @ param using data
 }
   \item{max_iter}{
 maximum iterations
