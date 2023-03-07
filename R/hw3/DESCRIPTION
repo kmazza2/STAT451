@@ -1,0 +1,9 @@
+Package: hw3
+Type: Package
+Title: Solutions to STAT 451 HW 3 problems
+Version: 1.0
+Date: 2023-03-07
+Author: Kevin Mazzarelli
+Maintainer: Kevin Mazzarelli <kmazza2@uic.edu>
+Description: R solutions to some of the homework problems. See ./demo for examples. Also see ../C for some C implementations.
+License: Unlimited
