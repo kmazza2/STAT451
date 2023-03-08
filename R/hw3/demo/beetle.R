@@ -42,14 +42,14 @@ d2 <- function (param, data) {
 			fac3*(K-N0)*fac2^(-2)+
 			fac3*K*fac2^(-2)+
 			fac3*K*(K-N0)*(-2)*fac2^(-3)*fac1
-)
+		)
 		d222 <- d222 + 2*N0*(
 			fac2^(-1)*(fac1*K*fac2^(-1)-1)*(
 				-N0*(fac2^(-1)+K*(-1)*fac2^(-2)*fac1)
 			)+
 			fac3*(fac1*K*fac2^(-1)-1)*((-1)*fac2^(-2)*fac1)+
 			fac3*fac2^(-1)*(fac1*(fac2^(-1)+K*(-1)*fac2^(-2)*fac1))
-)
+		)
 	}
 	d211 <- (-1) * d211
 	d212 <- (-1) * d212
