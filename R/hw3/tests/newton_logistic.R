@@ -41,7 +41,7 @@ d1 <- function (param, data) {
         K <- param[2]   
         d11 <- 0        
         d12 <- 0                
-        for(i in seq(param)) {
+        for(i in seq(dim(data)[1])) {
 		Ni <- N[i]
 		ti <- t[i]
                 d11 <- d11 + 2*(Ni-j(K, r, N0, ti))*(g(K, N0)*fp(r, ti)*j(K, r, N0, ti))
@@ -59,7 +59,7 @@ d2 <- function (param, data) {
         d211 <- 0
         d212 <- 0
         d222 <- 0
-	for(i in seq(param)) {
+	for(i in seq(dim(data)[1])) {
 		Ni <- N[i]
 		ti <- t[i]
 		d211 <- d211 +
@@ -73,14 +73,9 @@ d2 <- function (param, data) {
         }
         return(matrix(c(d211, d212, d212, d222), nrow=2))
 }
-# Expect Newton to encounter singular matrix
-tryCatch(
-	newton("data/beetles", "data/beetlesparam", d1, d2, 100, 0.01),
-	error=function(e) { quit(status=0) }
+result <- newton("../tests/data/beetles", "../tests/data/beetlesparam", d1, d2, 10000, 0.01)
+stopifnot(
+	result[1] == 1,
+	abs(result[4] - (0.117958549704334)) < 0.5,
+	abs(result[5] - (1.033515302810911e+03)) < 40
 )
-# result <- newton("data/beetles", "data/beetlesparam", d1, d2, 100, 0.01)
-# stopifnot(
-# 	result[1] == 1,
-# 	abs(result[4] - (0.117958549704334)) < 0.1,
-# 	abs(result[5] - (1.033515302810911e+03)) < 0.1
-# )
