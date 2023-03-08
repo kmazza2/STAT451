@@ -20,7 +20,7 @@ point_res <- function (param, data) {
         r <- param[1]
         K <- param[2]
 	A <- c()
-	for(i in seq(data)) {
+	for(i in seq(dim(data)[1])) {
 		yi <- N[i]
 		f <- K*N0*(N0+(K-N0)*exp(-r*t[i]))^(-1)
 		A <- c(A, yi - f)
