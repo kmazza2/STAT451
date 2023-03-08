@@ -5,10 +5,9 @@ gauss <- function (data_path, param_path, d1, point_res, max_iter, epsabs) {
 	start_time <- proc.time()
 	for(iter in seq(max_iter)) {
 		A <- c()
-		for(i in seq(data)) {
+		for(i in seq(dim(data)[1])) {
 			A <- cbind(A, d1(param, data, i))
 		} 
-		A <- t(A)
 		x <- point_res(param, data)
 		h <- solve((t(A) %*% A), (t(A) %*% x))
 		next_param <- param + h
