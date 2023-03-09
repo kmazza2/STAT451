@@ -11,6 +11,9 @@ gauss <- function (data_path, param_path, d1, point_res, max_iter, epsabs) {
 		A <- t(A)
 		x <- point_res(param, data)
 		h <- solve((t(A) %*% A), (t(A) %*% x))
+		if(any(is.nan(h))) {
+			stop("Update produced NaN")
+		}
 		next_param <- param + h
 		if(norm(next_param - param, type="F") < epsabs) {
 			converged <- TRUE
