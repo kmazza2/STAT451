@@ -1,0 +1,7 @@
+p1_newton	Solve oil spill problem using Newton-Raphson algorithm
+p1_fisher	Solve oil spill problem using Newton-Raphson with Fisher score
+p1_ascent	Solve oil spill problem using steepest ascent (w/ backtracking)
+p1_quasi	Solve oil spill problem using quasi-Newton, rank one method
+p2_gauss	Solve beetle problem using Gauss-Newton algorithm
+p2_newton	Solve beetle problem using Newton-Raphson algorithm
+p3_em		Solve trivariate normal distribution problem using EM algorithm
