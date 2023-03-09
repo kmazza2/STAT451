@@ -82,5 +82,5 @@ maxim <- function (param, data, expectation) {
 		s33
 	)))
 }
-result <- em("data/trivariatenormal.dat", "data/trivariatenormalparam.dat", expect, maxim, 100, 0.01)
+result <- em("data/trivariatenormal.dat", "data/trivariatenormalparam_bad.dat", expect, maxim, 100, 0.01)
 print(result)
