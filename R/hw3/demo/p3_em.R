@@ -5,8 +5,6 @@ ev <- function (v, u, w, param, data) {
 		param[5], param[6], param[8],
 		param[7], param[8], param[9]
 		), nrow=3)
-	print("ev")
-	print(param_mu[v])
 	return(param_mu[v])
 }
 ev2 <- function (v, u, w, param, data) {
@@ -16,8 +14,6 @@ ev2 <- function (v, u, w, param, data) {
 		param[5], param[6], param[8],
 		param[7], param[8], param[9]
 		), nrow=3)
-	print("ev2")
-	print(param_sigma[v][v] + param_mu[v]^2)
 	return(param_sigma[v][v] + param_mu[v]^2)
 }
 evw <- function(v, u, w, param, data) {
@@ -27,8 +23,6 @@ evw <- function(v, u, w, param, data) {
 		param[5], param[6], param[8],
 		param[7], param[8], param[9]
 		), nrow=3)
-	print("evw")
-	print(param_sigma[v][w] + param_mu[v] * param_mu[w])
 	return(param_sigma[v][w] + param_mu[v] * param_mu[w])
 }
 ev_given_u <- function (v, u, w, x_iu, param, data) {
@@ -38,12 +32,6 @@ ev_given_u <- function (v, u, w, x_iu, param, data) {
 		param[5], param[6], param[8],
 		param[7], param[8], param[9]
 		), nrow=3)
-	print("ev_given_u")
-	print(
-		param_mu[v] +
-		param_sigma[v][u] * (param_sigma[u][u])^(-1) *
-			(x_iu - param_mu[u])
-	)
 	return(
 		param_mu[v] +
 		param_sigma[v][u] * (param_sigma[u][u])^(-1) *
@@ -57,16 +45,6 @@ ev2_given_u <- function (v, u, w, x_iu, param, data) {
 		param[5], param[6], param[8],
 		param[7], param[8], param[9]
 		), nrow=3)
-	print("ev2_given_u")
-	print(
-		param_sigma[v][v] -
-		param_sigma[v][u]^2 * param_sigma[u][u]^(-1) +
-		(
-			param_mu[v] +
-			param_sigma[v][u] * param_sigma[u][u]^(-1) *
-				(x_iu - param_mu[u])
-		)^2
-	)
 	return(
 		param_sigma[v][v] -
 		param_sigma[v][u]^2 * param_sigma[u][u]^(-1) +
@@ -93,12 +71,6 @@ evw_given_u <- function (v, u, w, x_iu, param, data) {
 	sigma12 <- matrix(c(param_sigma[v][u], param_sigma[w][u]), nrow=2)
 	sigma21 <- t(sigma12)
 	sigma22 <- param_sigma[u][u]
-	print("evw_given_u")
-	print(
-		(sigma11-sigma12%*%solve(sigma22)%*%sigma21)[1][2] +
-		(mu1+sigma12%*%solve(sigma22)%*%(x_iu-mu2))[1] *
-			(mu1+sigma12%*%solve(sigma22)%*%(x_iu-mu2))[2]
-	)
 	return(
 		(sigma11-sigma12%*%solve(sigma22)%*%sigma21)[1][2] +
 		(mu1+sigma12%*%solve(sigma22)%*%(x_iu-mu2))[1] *
@@ -121,11 +93,6 @@ ev_given_uw <- function (v, u, w, x_iu, x_iw, param, data) {
 		nrow=2)
 	x2 <- matrix(c(x_iu, x_iw), nrow=2)
 	mu2 <- matrix(c(param_mu[u], param_mu[w]), nrow=2)
-	print("ev_given_uw")
-	print(
-		param_mu[v] +
-		sigma12 %*% solve(sigma22) %*% (x2 - mu2)
-	)
 	return(
 		param_mu[v] +
 		sigma12 %*% solve(sigma22) %*% (x2 - mu2)
@@ -149,12 +116,6 @@ ev2_given_uw <- function (v, u, w, x_iu, x_iw, param, data) {
 		nrow=2)
 	x2 <- matrix(c(x_iu, x_iw), nrow=2)
 	mu2 <- matrix(c(param_mu[u], param_mu[w]), nrow=2)
-	print("ev2_given_uw")
-	print(
-		sigma11 -
-		sigma12 %*% solve(sigma22) %*% t(sigma12) +
-		(mu1 + sigma12 %*% solve(sigma22) %*% (x2 - mu2))^2
-	)
 	return(
 		sigma11 -
 		sigma12 %*% solve(sigma22) %*% t(sigma12) +
@@ -174,7 +135,6 @@ expect <- function (param, data) {
 	s33 <- param[9]
 	s <- rep(0, 9)
 	for(i in seq(dim(data)[1])) {
-		print(s)  # DEBUG
 		s[1] <- s[1] +
 			if(is.na(data$x1[i])) {
 				if(is.na(data$x2[i])) {
