@@ -71,7 +71,6 @@ evw_given_u <- function (v, u, w, x_iu, param, data) {
 	sigma12 <- matrix(c(param_sigma[v,u], param_sigma[w,u]), nrow=2)
 	sigma21 <- t(sigma12)
 	sigma22 <- param_sigma[u,u]
-	print(sigma22)  # DEBUG
 	return(
 		(sigma11-sigma12%*%solve(sigma22)%*%sigma21)[1,2] +
 		(mu1+sigma12%*%solve(sigma22)%*%(x_iu-mu2))[1] *
@@ -94,7 +93,6 @@ ev_given_uw <- function (v, u, w, x_iu, x_iw, param, data) {
 		nrow=2)
 	x2 <- matrix(c(x_iu, x_iw), nrow=2)
 	mu2 <- matrix(c(param_mu[u], param_mu[w]), nrow=2)
-	print(sigma22)  # DEBUG
 	return(
 		param_mu[v] +
 		sigma12 %*% solve(sigma22) %*% (x2 - mu2)
@@ -118,7 +116,6 @@ ev2_given_uw <- function (v, u, w, x_iu, x_iw, param, data) {
 		nrow=2)
 	x2 <- matrix(c(x_iu, x_iw), nrow=2)
 	mu2 <- matrix(c(param_mu[u], param_mu[w]), nrow=2)
-	print(sigma22)  # DEBUG
 	return(
 		sigma11 -
 		sigma12 %*% solve(sigma22) %*% t(sigma12) +
