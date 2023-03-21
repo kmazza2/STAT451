@@ -1,12 +1,12 @@
+use nalgebra::DMatrix;
 use std::fs::File;
-use std::io::BufReader;
 use std::io::BufRead;
-use nalgebra::{DMatrix};
+use std::io::BufReader;
 
 pub fn matrix_from_file(path: &String) -> DMatrix<f64> {
     let file = File::open(path).expect("file not found");
     let mut reader = BufReader::new(file).lines().skip(2);
-    let dims:String = match reader.next() {
+    let dims: String = match reader.next() {
         None => panic!("Check file format"),
         Some(line) => line.unwrap(),
     };

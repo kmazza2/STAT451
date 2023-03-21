@@ -1,10 +1,9 @@
 use std::env;
-mod status;
 mod matrix_rdr;
 mod optim;
+mod status;
 
 fn main() {
-    
     status::init();
 
     let args: Vec<String> = env::args().collect();
@@ -18,5 +17,4 @@ fn main() {
     eprintln!("p:\n{}", p1_p_matrix);
     eprintln!("pi:\n{}", p1_pi_matrix);
     eprintln!("x0:\n{}", p1_x0_matrix);
-
 }
