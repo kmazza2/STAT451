@@ -91,3 +91,13 @@ fn lhs() {
     let result = min_quad_w_equal_lhs(&P, &A);
     assert_eq!(expected, result);
 }
+
+#[test]
+fn rhs() {
+    let q: DMatrix<f64> = DMatrix::from_vec(3, 1, vec![13.0, 11.0, 7.0]);
+    let b: DMatrix<f64> = DMatrix::from_vec(5, 1, vec![5.0, 17.0, 19.0, 23.0, 29.0]);
+    let expected: DMatrix<f64> =
+        DMatrix::from_vec(8, 1, vec![-13.0, -11.0, -7.0, 5.0, 17.0, 19.0, 23.0, 29.0]);
+    let result = min_quad_w_equal_rhs(&q, &b);
+    assert_eq!(expected, result);
+}
