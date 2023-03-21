@@ -1,6 +1,14 @@
 use nalgebra::DMatrix;
 use simple_error::SimpleError;
 
+pub fn newton_dec(h: &DMatrix<f64>, A: &DMatrix<f64>) -> f64 {
+    unimplemented!();
+    if A.shape().1 != h.shape().0 {
+        panic!("Arguments unconformable");
+    }
+    return 0.0;
+}
+
 pub fn min_quad_w_equal(
     P: &DMatrix<f64>,
     q: &DMatrix<f64>,
@@ -13,7 +21,7 @@ pub fn min_quad_w_equal(
     let A_dims = A.shape();
     let b_dims = b.shape();
     if P_dims.0 + A_dims.0 != q_dims.0 + b_dims.0 || q_dims.1 != 1 || b_dims.1 != 1 {
-        return Err(SimpleError::new("Arguments unconformable"));
+        panic!("Arguments unconformable");
     } else {
         let lhs: DMatrix<f64> = min_quad_w_equal_lhs(P, A);
         let rhs: DMatrix<f64> = min_quad_w_equal_rhs(q, b);
