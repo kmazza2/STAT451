@@ -5,6 +5,8 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 use nalgebra::{DMatrix};
+mod optim;
+
 fn main() {
     
     greeting();
@@ -20,6 +22,9 @@ fn main() {
     eprintln!("p:\n{}", p1_p_matrix);
     eprintln!("pi:\n{}", p1_pi_matrix);
     eprintln!("x0:\n{}", p1_x0_matrix);
+
+    optim::newton_step(p1_p_matrix, p1_pi_matrix, p1_x0_matrix);
+
 }
 
 
