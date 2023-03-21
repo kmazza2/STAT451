@@ -12,7 +12,7 @@ pub fn min_quad_w_equal(
     let q_dims = q.shape();
     let A_dims = A.shape();
     let b_dims = b.shape();
-    if P_dims.0 + A_dims.0 != q_dims.0 + b_dims.0 {
+    if P_dims.0 + A_dims.0 != q_dims.0 + b_dims.0 || q_dims.1 != 1 || b_dims.1 != 1 {
         return Err(SimpleError::new("Arguments unconformable"));
     } else {
         let mut lhs: DMatrix<f64> = DMatrix::<f64>::zeros(
@@ -30,6 +30,14 @@ pub fn min_quad_w_equal(
                 lhs[(j, P.ncols() + i)] = A[(i,j)];
             }
         }
+        let mut rhs: DMatrix<f64> = DMatrix::<f64>::zeros(P_dims.0 + A_dims.0, 1);
+        for i in 0..q.nrows() {
+            rhs[(i,0)] = -q[(i,0)];
+        }
+        for i in 0..b.nrows() {
+            rhs[(q.nrows() + i, 0)] = b[(i,0)];
+        }
+        eprintln!("{}", rhs);
         unimplemented!();
         return Ok(lhs);
     }
