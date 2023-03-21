@@ -77,6 +77,18 @@ fn min_univar_quad_w_equal() {
 }
 
 #[test]
+fn min_multivar_quad_w_equal() {
+    let P: DMatrix<f64> = DMatrix::from_vec(2, 2, vec![2.0, 0.0, 0.0, 2.0]);
+    let q: DMatrix<f64> = DMatrix::from_vec(2, 1, vec![0.0, 0.0]);
+    let r: DMatrix<f64> = DMatrix::from_vec(1, 1, vec![0.0]);
+    let A: DMatrix<f64> = DMatrix::from_vec(1, 2, vec![-1.0, 1.0]);
+    let b: DMatrix<f64> = DMatrix::from_vec(1, 1, vec![1.0]);
+    let expected: DMatrix<f64> = DMatrix::from_vec(2, 1, vec![-0.5, 0.5]);
+    let result = min_quad_w_equal(&P, &q, &r, &A, &b).unwrap();
+    assert_eq!(expected, result);
+}
+
+#[test]
 fn lhs() {
     let P: DMatrix<f64> = DMatrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
     let A: DMatrix<f64> = DMatrix::from_vec(3, 2, vec![5.0, 6.0, 7.0, 8.0, 9.0, 10.0]);
