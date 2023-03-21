@@ -37,9 +37,16 @@ pub fn min_quad_w_equal(
         for i in 0..b.nrows() {
             rhs[(q.nrows() + i, 0)] = b[(i,0)];
         }
-        eprintln!("{}", rhs);
-        unimplemented!();
-        return Ok(lhs);
+        let decomp = lhs.lu();
+        let sol = match decomp.solve(&rhs) {
+            None => return Err(SimpleError::new("Could not compute LU decomp")),
+            Some(decomp) => decomp
+        };
+        let mut result: DMatrix<f64> = DMatrix::<f64>::zeros(A_dims.1, 1);
+        for i in 0..A_dims.1 {
+            result[(i,0)] = sol[(i,0)];
+        }
+        return Ok(result);
     }
 
 }
@@ -53,6 +60,6 @@ fn min_univar_quad_w_equal() {
     let b: DMatrix<f64> = DMatrix::from_vec(1, 1, vec![5.0]);
     let result = min_quad_w_equal(&P, &q, &r, &A, &b);
     let x = result.unwrap()[(0,0)];
-    assert_eq!(x, 3.0/5.0);
+    assert_eq!(x, 5.0/3.0);
 
 }
