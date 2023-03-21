@@ -2,11 +2,12 @@ use nalgebra::DMatrix;
 use simple_error::SimpleError;
 
 pub fn newton_dec(h: &DMatrix<f64>, A: &DMatrix<f64>) -> f64 {
-    unimplemented!();
     if A.shape().1 != h.shape().0 {
         panic!("Arguments unconformable");
     }
-    return 0.0;
+    let prod = h.transpose() * A * h;
+    return prod[(0,0)];
+
 }
 
 pub fn min_quad_w_equal(
@@ -70,6 +71,15 @@ fn min_quad_w_equal_result(sol: DMatrix<f64>, nrows: usize) -> DMatrix<f64> {
         result[(i, 0)] = sol[(i, 0)];
     }
     return result;
+}
+
+#[test]
+fn dec() {
+    let h: DMatrix<f64> = DMatrix::from_vec(2, 1, vec![1.0, 2.0]);
+    let A: DMatrix<f64> = DMatrix::from_vec(2, 2, vec![3.0, 5.0, 4.0, 6.0]);
+    let result = newton_dec(&h, &A);
+    let expected = 45.0;
+    assert_eq!(expected, result);
 }
 
 #[test]
