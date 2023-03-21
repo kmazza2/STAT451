@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 ferris-says = "0.2"
 nalgebra = "*"
+simple-error = "0.2"
 
 [[bin]]
 name = "hw4"
