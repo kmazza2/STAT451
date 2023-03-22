@@ -53,10 +53,18 @@ class TestOptim(unittest.TestCase):
         result = hess(x)
         self.assertTrue(norm(expected - result) < 0.0001)
 
-    def test_simple_newton_w_equal(self):
+    def test_simple_newton_w_equal_no_backtrack(self):
         x0 = np.array([[1.3, 1.3, -1.3]]).T
         A = np.array([[-1.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 0.0]])
         b = np.array([[0.0, 0.0, 0.0]]).T
         expected = np.array([[0.0, 0.0, 0.0]]).T
-        result = optim.newton_w_equal(f, grad, hess, x0, A, b, 0.00001, 100)
+        result = optim.newton_w_equal(f, grad, hess, x0, A, b, 0.00001, 100, False)
+        self.assertTrue(norm(expected - result.x) < 0.0001)
+
+    def test_simple_newton_w_equal_backtrack(self):
+        x0 = np.array([[1.3, 1.3, -1.3]]).T
+        A = np.array([[-1.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 0.0]])
+        b = np.array([[0.0, 0.0, 0.0]]).T
+        expected = np.array([[0.0, 0.0, 0.0]]).T
+        result = optim.newton_w_equal(f, grad, hess, x0, A, b, 0.00001, 100, True)
         self.assertTrue(norm(expected - result.x) < 0.0001)

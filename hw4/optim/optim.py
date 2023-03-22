@@ -18,7 +18,7 @@ class OptimResult:
         )
 
 
-def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter):
+def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
     if A.shape[0] != A.shape[1]:
         raise Exception("A must be square")
     if linalg.norm((A @ x) - b) > 0.0001:
@@ -27,6 +27,11 @@ def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter):
     b = np.zeros((A.shape[0], 1))
     for iteration in range(1, max_iter + 1):
         step = min_quad_w_equal(hess(x), grad(x), r, A, b)
+        t = 1
+        if backtrack:
+            while f(x + t * step) >= f(x) and t > 0:
+                t = 0.5 * t
+        step = t * step
         x = x + step
         dec = newton_dec(step, A)
         if (dec**2) / 2.0 < eps:
