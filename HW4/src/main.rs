@@ -15,7 +15,4 @@ fn main() {
     let p1_p_matrix = matrix_rdr::matrix_from_file(p1_p_path);
     let p1_pi_matrix = matrix_rdr::matrix_from_file(p1_pi_path);
     let p1_x0_matrix = matrix_rdr::matrix_from_file(p1_x0_path);
-    eprintln!("p:\n{}", p1_p_matrix);
-    eprintln!("pi:\n{}", p1_pi_matrix);
-    eprintln!("x0:\n{}", p1_x0_matrix);
 }

@@ -2,32 +2,33 @@ use nalgebra::DMatrix;
 use simple_error::SimpleError;
 
 pub struct OptimResult {
-    x: DMatrix<f64>,
-    iter: usize,
-    converged: bool,
+    pub x: DMatrix<f64>,
+    pub iter: usize,
+    pub converged: bool,
 }
 
 pub fn newton_w_equal(
-    f: fn(DMatrix<f64>) -> f64,
-    grad: fn(DMatrix<f64>) -> DMatrix<f64>,
-    hess: fn(DMatrix<f64>) -> DMatrix<f64>,
+    f: fn(&DMatrix<f64>) -> f64,
+    grad: fn(&DMatrix<f64>) -> DMatrix<f64>,
+    hess: fn(&DMatrix<f64>) -> DMatrix<f64>,
     x0: DMatrix<f64>,
     A: DMatrix<f64>,
     b: DMatrix<f64>,
     eps: f64,
     max_iter: usize,
 ) -> OptimResult {
-    unimplemented!();
     let mut x = x0.clone();
-    let init_resid = A * x - b;
+    let init_resid = &A * &x - b;
     if init_resid.norm() > 0.0001 {
         panic!("Invalid initial guess");
     }
     let r: DMatrix<f64> = DMatrix::from_vec(0, 0, vec![]);
     let b: DMatrix<f64> = DMatrix::repeat(A.shape().0, 1, 0.0);
     for iter in 0..max_iter {
-        let step = match min_quad_w_equal(&hess(x), &grad(x), &r, &A, &b) {
-            Err(e) => {break;},
+        let step = match min_quad_w_equal(&hess(&x), &grad(&x), &r, &A, &b) {
+            Err(e) => {
+                break;
+            }
             Ok(result) => result,
         };
         let dec = newton_dec(&step, &A);
@@ -36,7 +37,7 @@ pub fn newton_w_equal(
                 x: x,
                 iter: iter,
                 converged: true,
-            }
+            };
         }
         x += step;
     }
@@ -48,7 +49,7 @@ pub fn newton_w_equal(
 }
 
 pub fn newton_dec(h: &DMatrix<f64>, A: &DMatrix<f64>) -> f64 {
-    if A.shape().1 != h.shape().0 {
+    if h.shape().0 != A.shape().0 || A.shape().1 != h.shape().0 {
         panic!("Arguments unconformable");
     }
     let prod = h.transpose() * A * h;
@@ -71,7 +72,7 @@ pub fn min_quad_w_equal(
     } else {
         let lhs: DMatrix<f64> = min_quad_w_equal_lhs(P, A);
         let rhs: DMatrix<f64> = min_quad_w_equal_rhs(q, b);
-        let decomp = lhs.lu();
+        let decomp = &lhs.lu();
         let sol = match decomp.solve(&rhs) {
             None => return Err(SimpleError::new("Could not compute LU decomp")),
             Some(decomp) => decomp,
