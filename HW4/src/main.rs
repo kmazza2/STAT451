@@ -2,6 +2,7 @@ use std::env;
 mod matrix_rdr;
 mod optim;
 mod status;
+mod test_utils;
 
 fn main() {
     status::init();
