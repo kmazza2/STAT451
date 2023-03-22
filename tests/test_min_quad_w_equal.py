@@ -64,6 +64,32 @@ def scaled_obj_w_log_barrier_hess1(t, x):
     )
 
 
+def scaled_obj_w_log_barrier2(t, x):
+    return t * ((x[0, 0] + 1.0) ** 2.0 + (x[1, 0] + 2) ** 2.0) - (
+        (log(x[0, 0]) if x[0, 0] > 0 else -inf)
+    )
+
+
+def scaled_obj_w_log_barrier_grad2(t, x):
+    return np.array(
+        [
+            [
+                2.0 * t * (x[0, 0] + 1.0) - x[0, 0] ** (-1.0),
+                2.0 * t * (x[1, 0] + 2),
+            ]
+        ]
+    ).T
+
+
+def scaled_obj_w_log_barrier_hess2(t, x):
+    return np.array(
+        [
+            [2.0 * t + x[0, 0] ** (-2.0), 0.0],
+            [0.0, 2.0 * t],
+        ]
+    )
+
+
 class TestOptim(unittest.TestCase):
     def test_min_univar_quad_w_equal(self):
         P = np.array([[2.0]])
@@ -145,6 +171,29 @@ class TestOptim(unittest.TestCase):
             scaled_obj_w_log_barrier1,
             scaled_obj_w_log_barrier_grad1,
             scaled_obj_w_log_barrier_hess1,
+            t0,
+            mu,
+            x0,
+            m,
+            A,
+            b,
+            1e-5,
+            100,
+        )
+        self.assertTrue(norm(expected - result.x) < 1e-4)
+
+    def test_complex_barrier(self):
+        t0 = 1.0
+        mu = 15.0
+        x0 = np.array([[2.0, -2]]).T
+        m = 2
+        A = np.array([[1.0, 1.0], [0.0, 0.0]])
+        b = np.zeros((2, 1))
+        expected = np.array([[0.5, -0.5]]).T
+        result = optim.barrier(
+            scaled_obj_w_log_barrier2,
+            scaled_obj_w_log_barrier_grad2,
+            scaled_obj_w_log_barrier_hess2,
             t0,
             mu,
             x0,
