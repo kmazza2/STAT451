@@ -9,11 +9,11 @@ def f(x):
 
 
 def grad(x):
-    return np.array([[2.0 * x[0, 0], 2.0 * x[1, 0], 3.0 * x[2, 0] ** 2]]).T
+    return np.array([[2.0 * x[0, 0], 2.0 * x[1, 0], 2.0 * x[2, 0]]]).T
 
 
 def hess(x):
-    return np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 6.0 * x[2, 0]]])
+    return np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
 
 
 class TestOptim(unittest.TestCase):
@@ -43,12 +43,20 @@ class TestOptim(unittest.TestCase):
 
     def test_grad(self):
         x = np.array([[3, 5, 7]]).T
-        expected = np.array([[2.0 * 3.0, 2.0 * 5.0, 3.0 * 7.0**2]]).T
+        expected = np.array([[2.0 * 3.0, 2.0 * 5.0, 2.0 * 7.0]]).T
         result = grad(x)
         self.assertTrue(norm(expected - result) < 0.0001)
 
     def test_hess(self):
         x = np.array([[3, 5, 7]]).T
-        expected = np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 42.0]]).T
+        expected = np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]]).T
         result = hess(x)
         self.assertTrue(norm(expected - result) < 0.0001)
+
+    def test_simple_newton_w_equal(self):
+        x0 = np.array([[1.3, 1.3, -1.3]]).T
+        A = np.array([[-1.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 0.0]])
+        b = np.array([[0.0, 0.0, 0.0]]).T
+        expected = np.array([[0.0, 0.0, 0.0]]).T
+        result = optim.newton_w_equal(f, grad, hess, x0, A, b, 0.00001, 100)
+        self.assertTrue(norm(expected - result.x) < 0.0001)

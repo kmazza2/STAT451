@@ -18,17 +18,19 @@ class OptimResult:
         )
 
 
-def newton_w_equal(f, grad, hess, x0, A, b, eps, max_iter):
+def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter):
+    if A.shape[0] != A.shape[1]:
+        raise Exception("A must be square")
     if linalg.norm((A @ x) - b) > 0.0001:
         raise Exception("Invalid initial guess")
     r = 0
     b = np.zeros((A.shape[0], 1))
-    for iteration in range(max_iter):
+    for iteration in range(1, max_iter + 1):
         step = min_quad_w_equal(hess(x), grad(x), r, A, b)
+        x = x + step
         dec = newton_dec(step, A)
         if (dec**2) / 2.0 < eps:
             return OptimResult(x, iteration, True)
-        x = x + step
     return OptimResult(x, max_iter, False)
 
 
@@ -40,11 +42,10 @@ def min_quad_w_equal(P, q, r, A, b):
     lhs = min_quad_w_equal_lhs(P, A)
     rhs = min_quad_w_equal_rhs(q, b)
     # TODO: Make robust against singular lhs?
-    sol = (
-        linalg.solve(lhs, rhs)
-        if lhs.shape[0] == lhs.shape[1]
-        else linalg.lstsq(lhs, rhs)
-    )
+    try:
+        sol = linalg.solve(lhs, rhs)
+    except:
+        sol = linalg.lstsq(lhs, rhs)[0]
     return sol[0 : A.shape[1]]
 
 
