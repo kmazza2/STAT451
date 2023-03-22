@@ -26,7 +26,7 @@ def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
         raise Exception("Invalid initial guess")
     r = 0
     b = np.zeros((A.shape[0], 1))
-    for iteration in range(1, max_iter + 1):
+    for iteration in range(max_iter):
         H = hess(x)
         G = grad(x)
         step = min_quad_w_equal(H, G, r, A, b)
@@ -35,10 +35,10 @@ def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
             while f(x + t * step) >= f(x) and t > 0:
                 t = 0.5 * t
         step = t * step
-        x = x + step
         dec = newton_dec(step, H)
         if (dec**2) / 2.0 < eps:
             return OptimResult(x, iteration, True)
+        x = x + step
     return OptimResult(x, max_iter, False)
 
 
