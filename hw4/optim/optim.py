@@ -19,6 +19,34 @@ class OptimResult:
         )
 
 
+def barrier(
+    scaled_obj_w_log_barrier,
+    scaled_obj_w_log_barrier_grad,
+    scaled_obj_w_log_barrier_hess,
+    t,
+    mu,
+    x,
+    m,
+    A,
+    b,
+    eps,
+    max_iter,
+):
+    for iteration in range(max_iter):
+        f = lambda x: scaled_obj_w_log_barrier(t, x)
+        grad = lambda x: scaled_obj_w_log_barrier_grad(t, x)
+        hess = lambda x: scaled_obj_w_log_barrier_hess(t, x)
+        newton_result = newton_w_equal(f, grad, hess, x, A, b, eps, max_iter)
+        if newton_result.converged:
+            x = newton_result.x[0]
+        else:
+            break
+        if m / t < eps:
+            return OptimResult(x, iteration, True)
+        t = mu * t
+    return OptimResult(x, max_iter, False)
+
+
 def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
     if A.shape[0] != A.shape[1]:
         raise Exception("A must be square")

@@ -1,5 +1,5 @@
 import hw4.optim.optim as optim
-from math import sqrt
+from math import sqrt, log, inf
 import numpy as np
 from scipy.linalg import norm
 import unittest
@@ -33,6 +33,33 @@ def hess2(x):
             [6.0 * x[0, 0] * x[1, 0], 3.0 * x[0, 0] ** 2.0, 0.0],
             [3.0 * x[0, 0] ** 2.0, 0.0, 0.0],
             [0.0, 0.0, -2.0],
+        ]
+    )
+
+
+def scaled_obj_w_log_barrier1(t, x):
+    return t * ((x[0, 0] + 1.0) ** 2.0 + (x[1, 0] + 2) ** 2.0) - (
+        (log(x[0, 0]) if x[0, 0] > 0 else -inf)
+        + (log(x[1, 0]) if x[1, 0] > 0 else -inf)
+    )
+
+
+def scaled_obj_w_log_barrier_grad1(t, x):
+    return np.array(
+        [
+            [
+                2.0 * t * (x[0, 0] + 1.0) - x[0, 0] ** (-1.0),
+                2.0 * t * (x[1, 0] + 2) - x[1, 0] ** (-1.0),
+            ]
+        ]
+    ).T
+
+
+def scaled_obj_w_log_barrier_hess1(t, x):
+    return np.array(
+        [
+            [2.0 * t + x[0, 0] ** (-2.0), 0.0],
+            [0.0, 2.0 * t + x[1, 0] ** (-2.0)],
         ]
     )
 
@@ -104,4 +131,27 @@ class TestOptim(unittest.TestCase):
             ]
         ).T
         result = optim.newton_w_equal(f2, grad2, hess2, x0, A, b, 1e-14, 100, True)
+        self.assertTrue(norm(expected - result.x) < 1e-4)
+
+    def test_simple_barrier(self):
+        t0 = 1.0
+        mu = 15.0
+        x0 = np.array([[2.0, 3.0]]).T
+        m = 2
+        A = np.zeros((2, 2))
+        b = np.zeros((2, 1))
+        expected = np.array([[0.0, 0.0]]).T
+        result = optim.barrier(
+            scaled_obj_w_log_barrier1,
+            scaled_obj_w_log_barrier_grad1,
+            scaled_obj_w_log_barrier_hess1,
+            t0,
+            mu,
+            x0,
+            m,
+            A,
+            b,
+            1e-5,
+            100,
+        )
         self.assertTrue(norm(expected - result.x) < 1e-4)
