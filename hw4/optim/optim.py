@@ -1,4 +1,5 @@
 import numpy as np
+from math import sqrt
 from scipy import linalg
 
 
@@ -26,21 +27,23 @@ def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
     r = 0
     b = np.zeros((A.shape[0], 1))
     for iteration in range(1, max_iter + 1):
-        step = min_quad_w_equal(hess(x), grad(x), r, A, b)
+        H = hess(x)
+        G = grad(x)
+        step = min_quad_w_equal(H, G, r, A, b)
         t = 1
         if backtrack:
             while f(x + t * step) >= f(x) and t > 0:
                 t = 0.5 * t
         step = t * step
         x = x + step
-        dec = newton_dec(step, A)
+        dec = newton_dec(step, H)
         if (dec**2) / 2.0 < eps:
             return OptimResult(x, iteration, True)
     return OptimResult(x, max_iter, False)
 
 
-def newton_dec(h, A):
-    return (h.T @ A @ h)[0, 0]
+def newton_dec(h, H):
+    return sqrt((h.T @ H @ h)[0, 0])
 
 
 def min_quad_w_equal(P, q, r, A, b):

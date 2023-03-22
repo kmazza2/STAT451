@@ -1,4 +1,5 @@
 import hw4.optim.optim as optim
+from math import sqrt
 import numpy as np
 from scipy.linalg import norm
 import unittest
@@ -14,6 +15,26 @@ def grad1(x):
 
 def hess1(x):
     return np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+
+
+def f2(x):
+    return (x[0, 0] ** 3.0) * x[1, 0] - x[2, 0] ** 2.0
+
+
+def grad2(x):
+    return np.array(
+        [[3.0 * (x[0, 0] ** 2.0) * x[1, 0], x[0, 0] ** 3.0, -2.0 * x[2, 0]]]
+    ).T
+
+
+def hess2(x):
+    return np.array(
+        [
+            [6.0 * x[0, 0] * x[1, 0], 3.0 * x[0, 0] ** 2.0, 0.0],
+            [3.0 * x[0, 0] ** 2.0, 0.0, 0.0],
+            [0.0, 0.0, -2.0],
+        ]
+    )
 
 
 class TestOptim(unittest.TestCase):
@@ -67,4 +88,20 @@ class TestOptim(unittest.TestCase):
         b = np.array([[0.0, 0.0, 0.0]]).T
         expected = np.array([[0.0, 0.0, 0.0]]).T
         result = optim.newton_w_equal(f1, grad1, hess1, x0, A, b, 0.00001, 100, True)
+        self.assertTrue(norm(expected - result.x) < 0.0001)
+
+    def test_complex_newton_w_equal_backtrack(self):
+        x0 = np.array([[-1.0, 0.0, 1.0]]).T
+        A = np.array([[1.0, 0.0, 1.0], [-1.0, 1.0, 0.0], [0.0, 0.0, 0.0]])
+        b = np.array([[0.0, 1.0, 0.0]]).T
+        expected = np.array(
+            [
+                [
+                    (-3.0 - sqrt(41.0)) / 8.0,
+                    (5.0 - sqrt(41.0)) / 8.0,
+                    (3.0 + sqrt(41.0)) / 8.0,
+                ]
+            ]
+        ).T
+        result = optim.newton_w_equal(f2, grad2, hess2, x0, A, b, 0.00001, 100, True)
         self.assertTrue(norm(expected - result.x) < 0.0001)
