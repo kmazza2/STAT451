@@ -4,15 +4,15 @@ from scipy.linalg import norm
 import unittest
 
 
-def f(x):
+def f1(x):
     return x[0, 0] ** 2 + x[1, 0] ** 2 + x[2, 0] ** 2
 
 
-def grad(x):
+def grad1(x):
     return np.array([[2.0 * x[0, 0], 2.0 * x[1, 0], 2.0 * x[2, 0]]]).T
 
 
-def hess(x):
+def hess1(x):
     return np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
 
 
@@ -37,20 +37,20 @@ class TestOptim(unittest.TestCase):
         result = optim.min_quad_w_equal(P, q, r, A, b)
         self.assertTrue(norm(expected - result) < 0.0001)
 
-    def test_f(self):
+    def test_f1(self):
         x = np.array([[2, 3, 5]]).T
-        self.assertEqual(f(x), 38.0)
+        self.assertEqual(f1(x), 38.0)
 
-    def test_grad(self):
+    def test_grad1(self):
         x = np.array([[3, 5, 7]]).T
         expected = np.array([[2.0 * 3.0, 2.0 * 5.0, 2.0 * 7.0]]).T
-        result = grad(x)
+        result = grad1(x)
         self.assertTrue(norm(expected - result) < 0.0001)
 
-    def test_hess(self):
+    def test_hess1(self):
         x = np.array([[3, 5, 7]]).T
         expected = np.array([[2.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]]).T
-        result = hess(x)
+        result = hess1(x)
         self.assertTrue(norm(expected - result) < 0.0001)
 
     def test_simple_newton_w_equal_no_backtrack(self):
@@ -58,7 +58,7 @@ class TestOptim(unittest.TestCase):
         A = np.array([[-1.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 0.0]])
         b = np.array([[0.0, 0.0, 0.0]]).T
         expected = np.array([[0.0, 0.0, 0.0]]).T
-        result = optim.newton_w_equal(f, grad, hess, x0, A, b, 0.00001, 100, False)
+        result = optim.newton_w_equal(f1, grad1, hess1, x0, A, b, 0.00001, 100, False)
         self.assertTrue(norm(expected - result.x) < 0.0001)
 
     def test_simple_newton_w_equal_backtrack(self):
@@ -66,5 +66,5 @@ class TestOptim(unittest.TestCase):
         A = np.array([[-1.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 0.0]])
         b = np.array([[0.0, 0.0, 0.0]]).T
         expected = np.array([[0.0, 0.0, 0.0]]).T
-        result = optim.newton_w_equal(f, grad, hess, x0, A, b, 0.00001, 100, True)
+        result = optim.newton_w_equal(f1, grad1, hess1, x0, A, b, 0.00001, 100, True)
         self.assertTrue(norm(expected - result.x) < 0.0001)
