@@ -7,9 +7,8 @@ import hw4.optim.optim as optim
 def _scaled_obj_w_log_barrier(t, p, pi, x):
     n = x.shape[0]
     m = p.shape[1]
-    weighted_log_sum = 0.0
-    sum_log = 0.0
     # Calculate weighted log sum
+    weighted_log_sum = 0.0
     for j in range(m):
         log_sum = 0.0
         for i in range(n):
@@ -17,7 +16,8 @@ def _scaled_obj_w_log_barrier(t, p, pi, x):
         log_sum = log(log_sum) if log_sum > 0 else -inf
         weighted_log_sum = weighted_log_sum + pi[j, 0] * log_sum
     # Calculate sum_log
-    for i in range(m):
+    sum_log = 0.0
+    for i in range(n):
         sum_log = sum_log + (log(x[i, 0]) if x[i, 0] > 0 else -inf)
     return -t * weighted_log_sum - sum_log
 
@@ -32,7 +32,7 @@ def _scaled_obj_w_log_barrier_grad(t, p, pi, x):
             denom = 0.0
             for i in range(n):
                 denom = denom + p[i, j] * x[i, 0]
-            weighted_sum = weighted_sum + (pi[j, 0] * (1.0 / denom) * p[k, j] * x[k, 0])
+            weighted_sum = weighted_sum + (pi[j, 0] * (1.0 / denom) * p[k, j])
         result[k, 0] = -t * weighted_sum - (1.0 / x[k, 0])
     return result
 
@@ -50,7 +50,7 @@ def _scaled_obj_w_log_barrier_hess(t, p, pi, x):
                     for i in range(n):
                         denom = denom + p[i, j] * x[i, 0]
                     weighted_sum = weighted_sum + (
-                        pi[j, 0] * p[k, j] * x[k, 0] * (1.0 / (denom**2.0)) * p[l, j]
+                        pi[j, 0] * p[k, j] * (1.0 / (denom**2.0)) * p[l, j]
                     )
                 result[k, l] = t * weighted_sum
             else:
@@ -60,13 +60,9 @@ def _scaled_obj_w_log_barrier_hess(t, p, pi, x):
                     for i in range(n):
                         denom = denom + p[i, j] * x[i, 0]
                     weighted_sum = weighted_sum + (
-                        pi[j, 0]
-                        * (
-                            p[k, j] * (1.0 / denom)
-                            - (p[k, j] * x[k, 0] * (1.0 / (denom**2.0)) * p[k, j])
-                        )
+                        pi[j, 0] * (p[k, j] ** 2.0) * (1.0 / (denom**2.0))
                     )
-                result[k, k] = -t * weighted_sum + (1.0 / (x[k, 0] ** 2.0))
+                result[k, k] = t * weighted_sum + (1.0 / (x[k, 0] ** 2.0))
     return result
 
 

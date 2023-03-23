@@ -40,7 +40,7 @@ def barrier(
         if newton_result.converged:
             x = newton_result.x[0]
         else:
-            break
+            return OptimResult(x, iteration, False)
         if m / t < eps:
             return OptimResult(x, iteration, True)
         t = mu * t
