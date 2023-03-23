@@ -47,7 +47,19 @@ def barrier(
     return OptimResult(x, max_iter, False)
 
 
-def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
+def newton_w_equal(
+    f,
+    grad,
+    hess,
+    x,
+    A,
+    b,
+    eps,
+    max_iter,
+    backtrack=True,
+    hessian_cutoff=True,
+    cutoff=1e10,
+):
     if A.shape[0] != A.shape[1]:
         raise Exception("A must be square")
     if linalg.norm((A @ x) - b) > 0.0001:
@@ -56,6 +68,8 @@ def newton_w_equal(f, grad, hess, x, A, b, eps, max_iter, backtrack=True):
     b = np.zeros((A.shape[0], 1))
     for iteration in range(max_iter):
         H = hess(x)
+        if hessian_cutoff and linalg.norm(H) > cutoff:
+            return OptimResult(x, iteration, True)
         G = grad(x)
         step = min_quad_w_equal(H, G, r, A, b)
         t = 1
