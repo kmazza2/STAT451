@@ -11,6 +11,6 @@ class TestOptim(unittest.TestCase):
         p = mmread("tests/data/null_p.mm")
         pi = mmread("tests/data/null_pi.mm")
         x0 = mmread("tests/data/null_x0.mm")
-        expected = np.array([[1.]])
+        expected = np.array([[1.0]])
         result = portfolio.optimize(p, pi, x0, 1e-4, 100)
         self.assertTrue(norm(expected - result.x) < 1e-4)
