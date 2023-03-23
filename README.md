@@ -10,6 +10,7 @@ docker run -it kmazza2/stat451
 ```
 Once the container is running, the following commands will execute the homework programs and tests:
 ```
+git clone https://github.com/kmazza2/STAT451
 cd STAT451
 git checkout HW4
 python3 hw4.py
