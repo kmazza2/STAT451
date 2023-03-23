@@ -96,6 +96,6 @@ def optimize(p, pi, x0, eps, max_iter):
         n,
         A,
         b,
-        1e-5,
-        100,
+        eps,
+        max_iter,
     )
