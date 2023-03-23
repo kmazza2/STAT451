@@ -1,7 +1,7 @@
 import numpy as np
 from math import sqrt, log, inf
 from scipy import linalg
-import hw4.optim.optim as optim
+import optim.optim as optim
 
 
 def _scaled_obj_w_log_barrier(t, p, pi, x):

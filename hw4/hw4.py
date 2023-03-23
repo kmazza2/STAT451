@@ -1,13 +1,11 @@
-import numpy as np
 from scipy.io import mmread
-from scipy import linalg
-import optim.optim as optim
+import portfolio.portfolio as portfolio
 
 p = mmread("data/p1_p.mm")
 pi = mmread("data/p1_pi.mm")
 x0 = mmread("data/p1_x0.mm")
-print(f"p:\n{p}")
-print(f"pi:\n{pi}")
-print(f"x0:\n{x0}")
 
-# Everything below here can be safely deleted
+result = portfolio.optimize(p, pi, x0, 1e-4, 100)
+print(
+    f"converged: {result.converged}\niterations: {result.iterations}\nvalue:\n{result.x[0]}"
+)
