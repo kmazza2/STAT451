@@ -1,4 +1,4 @@
-import hw4.optim.optim as optim
+import src.hw4.optim as optim
 from math import sqrt, log, inf
 import numpy as np
 from scipy.linalg import norm
