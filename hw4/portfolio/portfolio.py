@@ -1,12 +1,12 @@
 import numpy as np
-from math import sqrt, log
+from math import sqrt, log, inf
 from scipy import linalg
 import hw4.optim.optim as optim
 
 
 def _scaled_obj_w_log_barrier(t, p, pi, x):
     n = x.shape[0]
-    m = n
+    m = p.shape[1]
     weighted_log_sum = 0.0
     sum_log = 0.0
     # Calculate weighted log sum
@@ -14,17 +14,17 @@ def _scaled_obj_w_log_barrier(t, p, pi, x):
         log_sum = 0.0
         for i in range(n):
             log_sum = log_sum + p[i, j] * x[i, 0]
-        log_sum = log(log_sum)
+        log_sum = log(log_sum) if log_sum > 0 else -inf
         weighted_log_sum = weighted_log_sum + pi[j, 0] * log_sum
     # Calculate sum_log
     for i in range(m):
-        sum_log = sum_log + log(x[i, 0])
+        sum_log = sum_log + (log(x[i, 0]) if x[i, 0] > 0 else -inf)
     return -t * weighted_log_sum - sum_log
 
 
 def _scaled_obj_w_log_barrier_grad(t, p, pi, x):
     n = x.shape[0]
-    m = n
+    m = p.shape[1]
     result = np.zeros((n, 1))
     for k in range(n):
         weighted_sum = 0.0
@@ -39,7 +39,7 @@ def _scaled_obj_w_log_barrier_grad(t, p, pi, x):
 
 def _scaled_obj_w_log_barrier_hess(t, p, pi, x):
     n = x.shape[0]
-    m = n
+    m = p.shape[1]
     result = np.zeros((n, n))
     for k in range(n):
         for l in range(n):
@@ -80,9 +80,9 @@ def optimize(p, pi, x0, eps, max_iter):
         raise Exception("Uncomformable arguments")
     t0 = 1.0
     mu = 15.0
-    m = x0.shape[0]
-    A = np.ones((1, m))
-    b = np.array([[1.0]])
+    n = x0.shape[0]
+    A = np.block([[np.ones((1, n))], [np.zeros((n - 1, n))]])
+    b = np.block([[np.array([[1.0]])], [np.zeros((n - 1, 1))]])
     scaled_obj_w_log_barrier = lambda t, x: _scaled_obj_w_log_barrier(t, p, pi, x)
     scaled_obj_w_log_barrier_grad = lambda t, x: _scaled_obj_w_log_barrier_grad(
         t, p, pi, x
@@ -97,7 +97,7 @@ def optimize(p, pi, x0, eps, max_iter):
         t0,
         mu,
         x0,
-        m,
+        n,
         A,
         b,
         1e-5,
