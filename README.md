@@ -1,6 +1,6 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-This directory contains a Python package implementing solutions to the HW 4 problems. Install Docker and pull the container:
+This directory contains a Python package implementing solutions to the HW 4 problems. Install Docker, then pull the container with:
 ```
 docker pull kmazza2/stat451
 ```
