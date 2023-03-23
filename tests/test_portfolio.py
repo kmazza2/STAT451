@@ -6,7 +6,7 @@ from scipy.io import mmread
 import unittest
 
 
-class TestOptim(unittest.TestCase):
+class TestPortfolio(unittest.TestCase):
     def test_null_portfolio(self):
         p = mmread("tests/data/null_p.mm")
         pi = mmread("tests/data/null_pi.mm")
