@@ -1,4 +1,4 @@
-import src.hw4.portfolio as portfolio
+import portfolio
 from math import sqrt, log, inf
 import numpy as np
 from scipy.linalg import norm

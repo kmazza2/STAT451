@@ -7,3 +7,5 @@ poetry run src/hw4/hw4.py
 poetry run python -m unittest
 ```
 from the STAT451/hw4 directory to run the code for the homework assignment and execute the tests.
+python3 hw4.py
+python3 -m unittest

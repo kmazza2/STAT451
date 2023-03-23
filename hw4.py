@@ -1,9 +1,9 @@
 from scipy.io import mmread
-import src.hw4.portfolio as portfolio
+import portfolio
 
-p = mmread("src/hw4/data/p1_p.mm")
-pi = mmread("src/hw4/data/p1_pi.mm")
-x0 = mmread("src/hw4/data/p1_x0.mm")
+p = mmread("data/p1_p.mm")
+pi = mmread("data/p1_pi.mm")
+x0 = mmread("data/p1_x0.mm")
 
 result = portfolio.optimize(p, pi, x0, 1e-4, 100)
 print(
