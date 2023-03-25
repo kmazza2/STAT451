@@ -4,7 +4,7 @@ from scipy import linalg
 import optim
 
 
-def scaled_obj_w_log_barrier(t, x):
+def _scaled_obj_w_log_barrier(t, x):
     n = x.shape[0]
     weighted_sum_log = 0.0
     sum_log = 0.0
@@ -14,7 +14,7 @@ def scaled_obj_w_log_barrier(t, x):
     return t * weighted_sum_log - sum_log
 
 
-def scaled_obj_w_log_barrier_grad(t, x):
+def _scaled_obj_w_log_barrier_grad(t, x):
     n = x.shape[0]
     result = np.zeros((n, 1))
     for i in range(n):
@@ -22,7 +22,7 @@ def scaled_obj_w_log_barrier_grad(t, x):
     return result
 
 
-def scaled_obj_w_log_barrier_hess(t, x):
+def _scaled_obj_w_log_barrier_hess(t, x):
     n = x.shape[0]
     result = np.zeros((n, n))
     for i in range(n):
@@ -49,9 +49,9 @@ def optimize(A, b, x0, eps, max_iter):
     A = np.block([[A], [np.zeros((n - p, n))]])
     b = np.block([[b], [np.zeros((n - p, 1))]])
     return optim.barrier(
-        scaled_obj_w_log_barrier,
-        scaled_obj_w_log_barrier_grad,
-        scaled_obj_w_log_barrier_hess,
+        _scaled_obj_w_log_barrier,
+        _scaled_obj_w_log_barrier_grad,
+        _scaled_obj_w_log_barrier_hess,
         t0,
         mu,
         x0,
