@@ -37,7 +37,8 @@ def g(x):
     return sum1 - sum2 + sum3
 
 def optimize(A, b, x0, eps, max_iter):
-    t0 = 1.0
+#     t0 = 1.0
+    t0 = 0.01
     mu = 15.0
     t = t0
     x = x0
@@ -45,10 +46,11 @@ def optimize(A, b, x0, eps, max_iter):
     success = False
     for iteration in range(1, max_iter + 1):
         obj = lambda x: _obj(t, x, A, b)
-        next_x = minimize(obj, x)
+        next_x = minimize(obj, x, tol = 0.1)
         if next_x.success:
             x = next_x.x
         else:
+            success = True
             break
         if m/t < eps:
             success = True
