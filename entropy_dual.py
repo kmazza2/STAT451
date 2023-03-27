@@ -17,6 +17,7 @@ def nu(i, x):
 
 
 def x_star_i(i, x, A):
+    assert i < 10
     return exp(-1 + la(i, x) - sum([nu(j, x) * A[j, i] for j in range(3)]))
 
 
@@ -37,8 +38,20 @@ def _obj(t, x, A, b):
     return result
 
 def _grad(t, x, A, b):
-    raise NotImplementedError()
     x = x.reshape(13, 1)
+    la_grad = np.zeros((10, 1))
+    nu_grad = np.zeros((3, 1))
+    for k in range(10):
+        term1 = x_star_i(k, x) * (log(x_star_i(k, x)) - la(k, x))
+        term2 = sum([nu(i, x) * (A[i, k] * x_star_i(k, x) - b[i, 0]) for i in range(3)])
+        la_grad[k, 0] = -t * (term1 + term2) - (1. / la(k, x))
+    for l in range(3):
+        sum1 = sum([A[l, i] * x_star_i(i, x) * (1 + log(x_star_i(i, x))) for i in range(10)])
+        sum2 = sum([A[l, i] * la(i, x) * x_star_i(i, x) for i in range(10)])
+        sum3 = sum([nu(i, x) * sum([A[i, q] * A[l, q] * x_star_i(q, x) for q in range(10)]) for i in range(3)])
+        sum4 = sum([A[l, q] * x_star_i(q, x) for q in range(10)])
+        nu_grad[l, 0] = -t * (-sum1 + sum2 - sum3 + sum4 - b[l, 0])
+    return result
 
 
 def g(x):
