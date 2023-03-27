@@ -26,7 +26,7 @@ print(
 m = 10
 p = 3
 
-x0 = np.ones((13,1))
+x0 = np.ones((13, 1))
 
 result = entropy_dual.optimize(A, b, x0, 1e-4, 100)
 print(

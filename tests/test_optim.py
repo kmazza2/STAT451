@@ -90,6 +90,27 @@ def scaled_obj_w_log_barrier_hess2(t, x):
     )
 
 
+def f3(x):
+    result = np.zeros((2, 1))
+    result[0, 0] = (
+        3.0 * x[0, 0] ** 3.0
+        - (1.0 / 2.0) * x[0, 0] ** 2.0
+        - (13.0 / 2.0) * x[0, 0]
+        + (2.0 / 3.0)
+    )
+    result[1, 0] = 2.0 * x[1, 0]
+    return result
+
+
+def J3(x):
+    result = np.zeros((2, 2))
+    result[0, 0] = 9.0 * x[0, 0] ** 2.0 - x[0, 0] - (13.0 / 2.0)
+    result[0, 1] = 0.0
+    result[1, 0] = 0.0
+    result[1, 1] = 2.0
+    return result
+
+
 class TestOptim(unittest.TestCase):
     def test_min_univar_quad_w_equal(self):
         P = np.array([[2.0]])
@@ -204,3 +225,9 @@ class TestOptim(unittest.TestCase):
             100,
         )
         self.assertTrue(norm(expected - result.x) < 1e-4)
+
+    def test_unconstrained_newton(self):
+        x0 = np.array([[-1.2, 1.0]]).T
+        expected = np.array([[-1.442340828, 0.0]]).T
+        result = optim.unconstrained_newton(f3, J3, x0, 0.001, 100)
+        self.assertTrue(norm(expected - result.x) < 1e-2)
