@@ -34,7 +34,11 @@ def _obj(t, x, A, b):
     result = (-1.0) * t * (sum1 - sum2 + sum3) - sum(
         [(log(la(i, x)) if la(i, x) > 0 else -inf) for i in range(10)]
     )
-    return result.squeeze()
+    return result
+
+def _grad(t, x, A, b):
+    raise NotImplementedError()
+    x = x.reshape(13, 1)
 
 
 def g(x):
