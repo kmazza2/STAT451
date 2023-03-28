@@ -91,7 +91,6 @@ def newton_dec(h, H):
 def min_quad_w_equal(P, q, r, A, b):
     lhs = min_quad_w_equal_lhs(P, A)
     rhs = min_quad_w_equal_rhs(q, b)
-    # TODO: Make robust against singular lhs?
     try:
         sol = linalg.solve(lhs, rhs)
     except:
