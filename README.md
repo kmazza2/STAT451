@@ -15,3 +15,5 @@ python3 hw4.py
 python3 -m unittest
 ```
 It is that easy 😎
+
+If you don't want to use Docker, the code should run uncontainerized using Python 3.9.2 with NumPy 1.24.2 and SciPy 1.10.1. The container packages these dependencies for you though.
