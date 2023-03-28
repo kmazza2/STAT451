@@ -6,7 +6,7 @@ hw4.py
 optim.py
 portfolio.py
 ```
-optim.py contains functions used in both problems. portfolio.py contains code used for Problem 1. entropy.py and entropy_dual.py contain code for solving the primal and dual problems (respectively) in Problem 2. hw4.py runs the algorithms on the given inputs and presents their results.
+optim.py contains functions used in both problems. portfolio.py contains code used for Problem 1. entropy.py and entropy_dual.py contain code for solving the primal and dual problems (respectively) in Problem 2. hw4.py runs the algorithms on the given inputs and presents the result.
 
 octave_entropy_dual.m is a GNU Octave script confirming the result for the dual problem in Problem 2.
 
