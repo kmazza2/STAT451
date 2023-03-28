@@ -144,8 +144,4 @@ def optimize(A, b, x0, eps, max_iter):
             success = True
             break
         t = mu * t
-    x_star = np.zeros((10, 1))
-    x = x.reshape(13, 1)
-    for i in range(10):
-        x_star[i, 0] = x_star_i(i, x, A)
-    return optim.OptimResult(x_star, iteration, success)
+    return optim.OptimResult(x, iteration, success)

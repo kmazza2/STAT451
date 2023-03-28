@@ -48,3 +48,8 @@ result = entropy_dual.optimize(A, b, x0, 1e-4, 100)
 print(
     f"Problem 2(c)\nconverged: {result.converged}\niterations: {result.iterations}\nvalue:\n{result.x[0]}"
 )
+x_star = np.zeros((10, 1))
+x = result.x[0]
+for i in range(10):
+    x_star[i, 0] = entropy_dual.x_star_i(i, x, A)
+print(f"x_star:\n{x_star}")
