@@ -229,5 +229,5 @@ class TestOptim(unittest.TestCase):
     def test_unconstrained_newton(self):
         x0 = np.array([[-1.2, 1.0]]).T
         expected = np.array([[-1.442340828, 0.0]]).T
-        result = optim.unconstrained_newton(f3, J3, x0, 0.001, 100)
+        result = optim.unconstrained_newton(None, f3, J3, x0, 0.001, 100)
         self.assertTrue(norm(expected - result.x) < 1e-2)

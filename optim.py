@@ -107,10 +107,13 @@ def min_quad_w_equal_rhs(q, b):
     return np.block([[-1 * q], [b]])
 
 
-def unconstrained_newton(f, J, x0, eps, max_iter):
+def unconstrained_newton(f, J, hess, x0, eps, max_iter):
     x = x0
     for iteration in range(max_iter):
-        h = linalg.solve(J(x), -1.0 * f(x))
+        try:
+            h = linalg.solve(hess(x), -1.0 * J(x))
+        except ValueError:
+            return OptimResult(x, iteration, True)
         x = x + h
         if linalg.norm(h) < eps:
             return OptimResult(x, iteration, True)

@@ -1,7 +1,7 @@
 import numpy as np
 from math import sqrt, log, inf, exp
 import warnings
-
+import sys
 warnings.simplefilter("ignore")
 from scipy import linalg
 from scipy.optimize import minimize
@@ -42,15 +42,71 @@ def _grad(t, x, A, b):
     la_grad = np.zeros((10, 1))
     nu_grad = np.zeros((3, 1))
     for k in range(10):
-        term1 = x_star_i(k, x) * (log(x_star_i(k, x)) - la(k, x))
-        term2 = sum([nu(i, x) * (A[i, k] * x_star_i(k, x) - b[i, 0]) for i in range(3)])
+        term1 = x_star_i(k, x, A) * (log(x_star_i(k, x, A)) - la(k, x))
+        term2 = sum([nu(i, x) * (A[i, k] * x_star_i(k, x, A) - b[i, 0]) for i in range(3)])
         la_grad[k, 0] = -t * (term1 + term2) - (1. / la(k, x))
     for l in range(3):
-        sum1 = sum([A[l, i] * x_star_i(i, x) * (1 + log(x_star_i(i, x))) for i in range(10)])
-        sum2 = sum([A[l, i] * la(i, x) * x_star_i(i, x) for i in range(10)])
-        sum3 = sum([nu(i, x) * sum([A[i, q] * A[l, q] * x_star_i(q, x) for q in range(10)]) for i in range(3)])
-        sum4 = sum([A[l, q] * x_star_i(q, x) for q in range(10)])
+        sum1 = sum([A[l, i] * x_star_i(i, x, A) * (1 + log(x_star_i(i, x, A))) for i in range(10)])
+        sum2 = sum([A[l, i] * la(i, x) * x_star_i(i, x, A) for i in range(10)])
+        sum3 = sum([nu(i, x) * sum([A[i, q] * A[l, q] * x_star_i(q, x, A) for q in range(10)]) for i in range(3)])
+        sum4 = sum([A[l, q] * x_star_i(q, x, A) for q in range(10)])
         nu_grad[l, 0] = -t * (-sum1 + sum2 - sum3 + sum4 - b[l, 0])
+    return np.block([[la_grad],[nu_grad]])
+
+def _hess(t, x, A, b):
+    x = x.reshape(13, 1)
+    result = np.zeros((13, 13))
+    for r in range(13):
+        for k in range(r + 1):
+            if r < 10:
+                if r != k:
+                    result[r, k] = 0.
+                else:
+                    result[r, k] = (
+                        -t * (
+                            x_star_i(k, x, A) * (-la(k, x) + log(x_star_i(k, x, A))) +
+                            sum([nu(i, x) * A[i, k] * x_star_i(k, x, A) for i in range(3)])
+                        ) - (1. / la(k, x))**2.
+                    )
+            else:
+                l = r - 10
+                if k < 10:
+                    result[r, k] = (
+                        -t * (
+                            -A[l, k] * x_star_i(k, x, A) * (1 - la(k, x) + log(x_star_i(k, x, A))) -
+                            sum([nu(i, x) * A[i, k] * A[l, k] * x_star_i(k, x, A) for i in range(3)]) +
+                            A[l, k] * x_star_i(k, x, A) -
+                            b[l, 0]
+                        )
+                    )
+                else:
+                    w = k - 10
+                    result[r, k] = (
+                        -t * (
+                            sum(
+                                [
+                                    A[l, i] *
+                                    A[w, i] *
+                                    x_star_i(i, x, A) *
+                                    (2 + log(x_star_i(i, x, A)))
+                                    for i in range(10)
+                                ]
+                            ) -
+                            sum([A[l, i] * A[w, i] * la(i, x) * x_star_i(i, x, A) for i in range(10)]) +
+                            sum(
+                                [
+                                    nu(i, x) *
+                                    sum([A[i, q] * A[l, q] * A[w, q] * x_star_i(q, x, A) for q in range(9)])
+                                    for i in range(3)
+                                ]
+                            ) -
+                            sum([A[w, q] * A[l, q] * x_star_i(q, x, A) for q in range(10)]) -
+                            sum([A[l, q] * A[w, q] * x_star_i(q, x, A) for q in range(10)])
+                        )
+                    )
+    for r in range(13):
+        for k in range(r):
+            result[k, r] = result[r, k]
     return result
 
 
@@ -68,27 +124,28 @@ def g(x):
 
 
 def optimize(A, b, x0, eps, max_iter):
-    #     t0 = 1.0
     t0 = 0.01
-    mu = 15.0
+    mu = 2.0
     t = t0
     x = x0
     m = 10
     success = False
     for iteration in range(1, max_iter + 1):
         obj = lambda x: _obj(t, x, A, b)
-        next_x = minimize(obj, x, tol=0.1)
-        if next_x.success:
-            x = next_x.x
+        grad = lambda x: _grad(t, x, A, b)
+        hess = lambda x: _hess(t, x, A, b)
+        next_x = optim.unconstrained_newton(obj, grad, hess, x, eps, max_iter)
+        if next_x.converged:
+            x = next_x.x[0]
         else:
-            success = True
+            success = False
             break
         if m / t < eps:
             success = True
             break
         t = mu * t
     x_star = np.zeros((10, 1))
+    x = x.reshape(13, 1)
     for i in range(10):
-        x = x.reshape(13, 1)
         x_star[i, 0] = x_star_i(i, x, A)
     return optim.OptimResult(x_star, iteration, success)
