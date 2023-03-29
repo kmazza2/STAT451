@@ -4,7 +4,6 @@ import warnings
 import sys
 warnings.simplefilter("ignore")
 from scipy import linalg
-from scipy.optimize import minimize
 import optim
 
 
