@@ -6,7 +6,7 @@ The Dockerfile contains build details for a minimal, reproducible environment in
 ```
 docker pull kmazza2/stat451
 docker run -it kmazza2/stat451
-cd STAT451
+git clone https://github.com/kmazza2/STAT451
 ```
 Check out your favorite branch with
 ```
