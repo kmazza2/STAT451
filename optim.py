@@ -31,12 +31,15 @@ def barrier(
     b,
     eps,
     max_iter,
+    backtrack=True
 ):
     for iteration in range(max_iter):
         f = lambda x: scaled_obj_w_log_barrier(t, x)
         grad = lambda x: scaled_obj_w_log_barrier_grad(t, x)
         hess = lambda x: scaled_obj_w_log_barrier_hess(t, x)
-        newton_result = newton_w_equal(f, grad, hess, x, A, b, eps, max_iter)
+        newton_result = newton_w_equal(f, grad, hess, x, A, b, eps,
+            max_iter, backtrack=backtrack
+        )
         if newton_result.converged:
             x = newton_result.x[0]
         else:

@@ -66,7 +66,7 @@ def _scaled_obj_w_log_barrier_hess(t, p, pi, x):
     return result
 
 
-def optimize(p, pi, x0, eps, max_iter):
+def optimize(p, pi, x0, eps, max_iter, backtrack=True):
     if (
         x0.shape[0] != p.shape[0]
         or pi.shape[0] != p.shape[1]
@@ -98,4 +98,5 @@ def optimize(p, pi, x0, eps, max_iter):
         b,
         eps,
         max_iter,
+        backtrack
     )

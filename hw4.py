@@ -8,9 +8,14 @@ p = mmread("data/p1_p.mm")
 pi = mmread("data/p1_pi.mm")
 x0 = mmread("data/p1_x0.mm")
 
-result = portfolio.optimize(p, pi, x0, 1e-4, 100)
+result = portfolio.optimize(p, pi, x0, 1e-4, 100, backtrack=False)
 print(
-    f"Problem 1(c)\nconverged: {result.converged}\niterations: {result.iterations}\nvalue:\n{result.x[0]}"
+    f"Problem 1(c) without backtracking\nconverged: {result.converged}\niterations: {result.iterations}\nvalue:\n{result.x[0]}"
+)
+
+result = portfolio.optimize(p, pi, x0, 1e-4, 100, backtrack=True)
+print(
+    f"Problem 1(c) with backtracking\nconverged: {result.converged}\niterations: {result.iterations}\nvalue:\n{result.x[0]}"
 )
 
 A = mmread("data/p2_A.mm")
