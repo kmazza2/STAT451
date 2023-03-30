@@ -6,7 +6,7 @@ hw4.py
 optim.py
 portfolio.py
 ```
-optim.py contains functions used in both problems. portfolio.py contains code used for Problem 1. entropy.py and entropy_dual.py contain code for solving the primal and dual problems (respectively) in Problem 2. hw4.py runs the algorithms on the given inputs and presents the result.
+optim.py contains implementations of Newton's method for problems with inequality and equality constraints (barrier), problems with equality constraints only (newton_w_equal), quadratic problems with equality constraints only (min_quad_w_equal), and fully unconstrained problems (unconstrained_newton). (Boyd suggests implementing each of these, then reducing each problem to a sequence of problems of a simpler class. That is the approach I took here.) portfolio.py sets up the objective, gradient, and Hessian for Problem 1. entropy.py and entropy_dual.py contain implementations of the objectives, gradients, and Hessians for the primal and dual problems (respectively) in Problem 2. hw4.py runs the algorithms on the given inputs and presents the result.
 
 octave_entropy_dual.m is a GNU Octave script confirming the result for the dual problem in Problem 2.
 
@@ -20,4 +20,3 @@ git checkout HW4
 python3 hw4.py
 python3 -m unittest
 ```
-
