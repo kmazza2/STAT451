@@ -41,14 +41,59 @@ def _grad(t, x, A, b):
     la_grad = np.zeros((10, 1))
     nu_grad = np.zeros((3, 1))
     for k in range(10):
-        term1 = x_star_i(k, x, A) * (log(x_star_i(k, x, A)) - la(k, x))
-        term2 = sum([nu(i, x) * (A[i, k] * x_star_i(k, x, A) - b[i, 0]) for i in range(3)])
+        term1 = (
+            x_star_i(k, x, A) *
+            (
+                log(x_star_i(k, x, A)) - la(k, x)
+            )
+        )
+        term2 = sum(
+            [
+                nu(i, x) *
+                A[i, k] *
+                x_star_i(k, x, A)
+                for i in range(3)
+            ]
+        )
         la_grad[k, 0] = -t * (term1 + term2) - (1. / la(k, x))
     for l in range(3):
-        sum1 = sum([A[l, i] * x_star_i(i, x, A) * (1 + log(x_star_i(i, x, A))) for i in range(10)])
-        sum2 = sum([A[l, i] * la(i, x) * x_star_i(i, x, A) for i in range(10)])
-        sum3 = sum([nu(i, x) * sum([A[i, q] * A[l, q] * x_star_i(q, x, A) for q in range(10)]) for i in range(3)])
-        sum4 = sum([A[l, q] * x_star_i(q, x, A) for q in range(10)])
+        sum1 = sum(
+            [
+                A[l, i] *
+                x_star_i(i, x, A) *
+                (1 + log(x_star_i(i, x, A)))
+                for i in range(10)
+            ]
+        )
+        sum2 = sum(
+            [
+                A[l, i] *
+                la(i, x) *
+                x_star_i(i, x, A)
+                for i in range(10)
+            ]
+        )
+        sum3 = sum(
+            [
+                nu(i, x) *
+                sum(
+                    [
+                        A[i, q] *
+                        A[l, q] *
+                        x_star_i(q, x, A)
+                        for q in range(10)
+                    ]
+                )
+                for i in range(3)
+            ]
+        )
+        sum4 = sum(
+            [
+                A[l, q] *
+                x_star_i(q, x, A)
+                for q in range(10)
+            ]
+        )
         nu_grad[l, 0] = -t * (-sum1 + sum2 - sum3 + sum4 - b[l, 0])
     return np.block([[la_grad],[nu_grad]])
 
@@ -63,19 +108,36 @@ def _hess(t, x, A, b):
                 else:
                     result[r, k] = (
                         -t * (
-                            x_star_i(k, x, A) * (-la(k, x) + log(x_star_i(k, x, A))) +
-                            sum([nu(i, x) * A[i, k] * x_star_i(k, x, A) for i in range(3)])
-                        ) - (1. / la(k, x))**2.
+                            x_star_i(k, x, A) * (
+                                -la(k, x) + log(x_star_i(k, x, A))
+                            ) +
+                            sum(
+                                [
+                                    nu(i, x) *
+                                    A[i, k] *
+                                    x_star_i(k, x, A)
+                                    for i in range(3)
+                                ]
+                            )
+                        ) + (1. / la(k, x))**2.
                     )
             else:
                 l = r - 10
                 if k < 10:
                     result[r, k] = (
                         -t * (
-                            -A[l, k] * x_star_i(k, x, A) * (1 - la(k, x) + log(x_star_i(k, x, A))) -
-                            sum([nu(i, x) * A[i, k] * A[l, k] * x_star_i(k, x, A) for i in range(3)]) +
-                            A[l, k] * x_star_i(k, x, A) -
-                            b[l, 0]
+                            -A[l, k] * x_star_i(k, x, A) * (
+                                -la(k, x) + log(x_star_i(k, x, A))
+                            ) -
+                            sum(
+                                [
+                                    nu(i, x) *
+                                    A[i, k] *
+                                    A[l, k] *
+                                    x_star_i(k, x, A)
+                                    for i in range(3)
+                                ]
+                            )
                         )
                     )
                 else:
@@ -90,17 +152,30 @@ def _hess(t, x, A, b):
                                     (2 + log(x_star_i(i, x, A)))
                                     for i in range(10)
                                 ]
-                            ) -
-                            sum([A[l, i] * A[w, i] * la(i, x) * x_star_i(i, x, A) for i in range(10)]) +
+                            ) +
                             sum(
                                 [
                                     nu(i, x) *
-                                    sum([A[i, q] * A[l, q] * A[w, q] * x_star_i(q, x, A) for q in range(9)])
+                                    sum(
+                                        [
+                                            A[i, q] *
+                                            A[l, q] *
+                                            A[w, q] *
+                                            x_star_i(q, x, A)
+                                            for q in range(10)
+                                        ]
+                                    )
                                     for i in range(3)
                                 ]
                             ) -
-                            sum([A[w, q] * A[l, q] * x_star_i(q, x, A) for q in range(10)]) -
-                            sum([A[l, q] * A[w, q] * x_star_i(q, x, A) for q in range(10)])
+                            2. * sum(
+                                [
+                                    A[l, q] *
+                                    A[w, q] *
+                                    x_star_i(q, x, A)
+                                    for q in range(10)
+                                ]
+                            )
                         )
                     )
     for r in range(13):
@@ -123,8 +198,8 @@ def g(x):
 
 
 def optimize(A, b, x0, eps, max_iter):
-    t0 = 0.01
-    mu = 2.0
+    t0 = 2000
+    mu = 1.1
     t = t0
     x = x0
     m = 10
