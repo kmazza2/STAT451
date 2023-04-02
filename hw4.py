@@ -49,7 +49,7 @@ x0 = np.array(
     ]
 )
 
-result = entropy_dual.optimize(A, b, x0, 1e-4, 100)
+result = entropy_dual.optimize(A, b, x0, 1e-14, 1000)
 print(
     f"Problem 2(c)\nconverged: {result.converged}\niterations: {result.iterations}\nvalue:\n{result.x[0]}"
 )
