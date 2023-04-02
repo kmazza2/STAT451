@@ -202,7 +202,7 @@ def optimize(A, b, x0, eps, max_iter):
     mu = 1.1
     t = t0
     x = x0
-    m = 10
+    m = 1e8
     success = False
     for iteration in range(1, max_iter + 1):
         obj = lambda x: _obj(t, x, A, b)
