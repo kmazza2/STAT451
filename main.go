@@ -12,7 +12,7 @@ import (
 const Trials = 10000000
 const Samples = 30
 const Seed = 0
-const Beta = 1.23456789
+const Beta = 2.
 const InvCdf = -1.959963984540054
 
 func main() {
