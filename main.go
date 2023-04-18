@@ -9,7 +9,8 @@ import (
 	"math"
 )
 
-const N = 10000000
+const Trials = 10000000
+const Samples = 30
 const Seed = 0
 const Beta = 1.23456789
 const InvCdf = -1.959963984540054
@@ -23,25 +24,27 @@ func main() {
 		seed_rng.Next())
 	unif_rng := u2f.NewUint64toFloat64(&src_rng)
 	normal_rng := nrng.NewNormalrng(&unif_rng, 0, 1)
-	y := make([]float64, N)
-	x := make([]float64, N)
-	e := make([]float64, N)
-	for i := 0; i < N; i++ {
-		x[i] = unif_rng.Next()
+	ci_contains_param := 0.
+	for i := 0; i < Trials; i++ {
+		y := make([]float64, Samples)
+		x := make([]float64, Samples)
+		e := make([]float64, Samples)
+		for j := 0; j < Samples; j++ {
+			x[j] = unif_rng.Next()
+		}
+		for j := 0; j < Samples; j++ {
+			e[j] = normal_rng.Next()
+		}
+		for j := 0; j < Samples; j++ {
+			y[j] = Beta*x[j] + e[j]
+		}
+		lower := beta1_hat(x, y) - T(x)
+		upper := beta1_hat(x, y) + T(x)
+		if lower <= Beta && Beta <= upper {
+			ci_contains_param += 1.
+		}
 	}
-	for i := 0; i < N; i++ {
-		e[i] = normal_rng.Next()
-	}
-	for i := 0; i < N; i++ {
-		y[i] = Beta*x[i] + e[i]
-	}
-	fmt.Println(mean(y))
-	fmt.Println(mean(x))
-	fmt.Println(mean(e))
-	fmt.Println("lower:")
-	fmt.Println(beta1_hat(x, y) - T(x))
-	fmt.Println("upper:")
-	fmt.Println(beta1_hat(x, y) + T(x))
+	fmt.Println(ci_contains_param / Trials)
 }
 
 func sum(s []float64) float64 {
