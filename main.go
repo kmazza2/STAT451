@@ -9,9 +9,10 @@ import (
 	u2f "github.com/kmazza2/urn/uint64tofloat64"
 	x256xx "github.com/kmazza2/urn/xoshiro256xx"
 	"math"
+	"sort"
 )
 
-const Trials = 100000
+const Trials = 2000
 const Samples = 30
 const Resamples = 1000
 const Seed = 0
@@ -31,6 +32,7 @@ func main() {
 	mean_analytic_l := 0.
 	mean_analytic_u := 0.
 	mean_analytic_width := 0.
+	resampled_beta1_hat_dist := make([]float64, Resamples)
 	for i := 0; i < Trials; i++ {
 		y := make([]float64, Samples)
 		x := make([]float64, Samples)
@@ -44,6 +46,7 @@ func main() {
 		for j := 0; j < Samples; j++ {
 			y[j] = Beta*x[j] + e[j]
 		}
+		zipped_dataset := zip(x, y)
 		// The dataset has now been generated.
 		// Calculate the confidence interval analytically:
 		lower := beta1_hat(x, y) - t(x)
@@ -54,7 +57,14 @@ func main() {
 		if lower <= Beta && Beta <= upper {
 			ci_contains_param += 1.
 		}
-		// Calculate the confidence interval using bootstrap:
+		// Calculate the confidence interval using paired bootstrap:
+		//empirical_beta_hat := make([]float64, Resamples)
+		for j := 0; j < Resamples; j++ {
+			current_resample := resample(zipped_dataset, unif_rng)
+			resample_x, resample_y := unzip(current_resample)
+			resampled_beta1_hat_dist[j] = beta1_hat(resample_x, resample_y)
+		}
+		sort.Sort(sort.Float64Slice(resampled_beta1_hat_dist))
 	}
 	mean_analytic_l /= Trials
 	mean_analytic_u /= Trials
@@ -95,9 +105,9 @@ func t(x []float64) float64 {
 	return -1. * InvCdf / math.Sqrt(sum)
 }
 
-func resample(data []float64, src_rng f64rng.Float64rng) []float64 {
-	dunif_rng := drng.NewDunifrng(src_rng, Samples)
-	result := make([]float64, len(data))
+func resample(data []pair, src_rng f64rng.Float64rng) []pair {
+	dunif_rng := drng.NewDunifrng(src_rng, uint64(len(data)))
+	result := make([]pair, len(data))
 	for i := 0; i < len(data); i++ {
 		result[i] = data[dunif_rng.Next()-1]
 	}
@@ -118,4 +128,14 @@ func zip(x []float64, y []float64) []pair {
 		result[i] = pair{x[i], y[i]}
 	}
 	return result
+}
+
+func unzip(zipped_data []pair) ([]float64, []float64) {
+	x := make([]float64, len(zipped_data))
+	y := make([]float64, len(zipped_data))
+	for i := 0; i < len(zipped_data); i++ {
+		x[i] = zipped_data[i].x
+		y[i] = zipped_data[i].y
+	}
+	return x, y
 }
