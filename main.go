@@ -11,8 +11,9 @@ import (
 	"math"
 )
 
-const Trials = 1000000
+const Trials = 100000
 const Samples = 30
+const Resamples = 1000
 const Seed = 0
 const Beta = 2.
 const InvCdf = -1.959963984540054
@@ -27,6 +28,9 @@ func main() {
 	unif_rng := u2f.NewUint64toFloat64(&src_rng)
 	normal_rng := nrng.NewNormalrng(&unif_rng, 0, 1)
 	ci_contains_param := 0.
+	mean_analytic_l := 0.
+	mean_analytic_u := 0.
+	mean_analytic_width := 0.
 	for i := 0; i < Trials; i++ {
 		y := make([]float64, Samples)
 		x := make([]float64, Samples)
@@ -44,12 +48,21 @@ func main() {
 		// Calculate the confidence interval analytically:
 		lower := beta1_hat(x, y) - t(x)
 		upper := beta1_hat(x, y) + t(x)
+		mean_analytic_l += lower
+		mean_analytic_u += upper
+		mean_analytic_width += upper - lower
 		if lower <= Beta && Beta <= upper {
 			ci_contains_param += 1.
 		}
 		// Calculate the confidence interval using bootstrap:
 	}
-	fmt.Println(ci_contains_param / Trials)
+	mean_analytic_l /= Trials
+	mean_analytic_u /= Trials
+	mean_analytic_width /= Trials
+	fmt.Printf("mean analytic lower bound: %f\n", mean_analytic_l)
+	fmt.Printf("mean analytic upper bound: %f\n", mean_analytic_u)
+	fmt.Printf("mean analytic width: %f\n", mean_analytic_width)
+	fmt.Printf("analytic CI coverage: %f\n", ci_contains_param/Trials)
 }
 
 func sum(s []float64) float64 {
@@ -87,6 +100,22 @@ func resample(data []float64, src_rng f64rng.Float64rng) []float64 {
 	result := make([]float64, len(data))
 	for i := 0; i < len(data); i++ {
 		result[i] = data[dunif_rng.Next()-1]
+	}
+	return result
+}
+
+type pair struct {
+	x float64
+	y float64
+}
+
+func zip(x []float64, y []float64) []pair {
+	if len(x) != len(y) {
+		panic("len(x) != len(y)")
+	}
+	result := make([]pair, len(x))
+	for i := 0; i < len(x); i++ {
+		result[i] = pair{x[i], y[i]}
 	}
 	return result
 }
