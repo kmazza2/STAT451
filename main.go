@@ -19,6 +19,8 @@ const Resamples = 1000
 const Seed = 0
 const Beta = 2.
 const InvCdf = -1.959963984540054
+const CauchySamplesSmall = 30
+const CauchySamplesLarge = 100
 const CauchyResamplesSmall = 1000
 const CauchyResamplesLarge = 10000
 
@@ -119,8 +121,8 @@ func main() {
 	mean_bootstrap_mean := 0.
 	resampled_cauchy_mean_dist := make([]float64, CauchyResamplesSmall)
 	for i := 0; i < Trials; i++ {
-		x := make([]float64, Samples)
-		for j := 0; j < Samples; j++ {
+		x := make([]float64, CauchySamplesSmall)
+		for j := 0; j < CauchySamplesSmall; j++ {
 			x[j] = cauchy_rng.Next()
 		}
 		for j := 0; j < CauchyResamplesSmall; j++ {
