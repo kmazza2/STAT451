@@ -144,7 +144,43 @@ func main() {
 	mean_bootstrap_u /= Trials
 	mean_bootstrap_width /= Trials
 	mean_bootstrap_mean /= Trials
-	fmt.Printf("\t%v resamples:\n", CauchyResamplesSmall)
+	fmt.Printf("\t%v samples, %v resamples:\n", CauchySamplesSmall, CauchyResamplesSmall)
+	fmt.Printf("\t\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
+	fmt.Printf("\t\tbootstrap CI coverage (median): %f\n", bootstrap_ci_contains_param/Trials)
+	bootstrap_ci_contains_param = 0.
+	mean_bootstrap_l = 0.
+	mean_bootstrap_u = 0.
+	mean_bootstrap_width = 0.
+	mean_bootstrap_mean = 0.
+	resampled_cauchy_mean_dist = make([]float64, CauchyResamplesLarge)
+	for i := 0; i < Trials; i++ {
+		x := make([]float64, CauchySamplesSmall)
+		for j := 0; j < CauchySamplesSmall; j++ {
+			x[j] = cauchy_rng.Next()
+		}
+		for j := 0; j < CauchyResamplesLarge; j++ {
+			current_resample := resample1d(x, unif_rng)
+			resampled_cauchy_mean_dist[j] = sum(current_resample) / float64(len(current_resample))
+		}
+		sort.Sort(sort.Float64Slice(resampled_cauchy_mean_dist))
+		bootstrap_l := disc_quantile(0.025, resampled_cauchy_mean_dist)
+		bootstrap_u := disc_quantile(0.975, resampled_cauchy_mean_dist)
+		mean_bootstrap_l += bootstrap_l
+		mean_bootstrap_u += bootstrap_u
+		mean_bootstrap_width += bootstrap_u - bootstrap_l
+		if bootstrap_l <= 0 && 0 <= bootstrap_u {
+			bootstrap_ci_contains_param += 1.
+		}
+		mean_bootstrap_mean += sum(resampled_cauchy_mean_dist) / float64(len(resampled_cauchy_mean_dist))
+	}
+	mean_bootstrap_l /= Trials
+	mean_bootstrap_u /= Trials
+	mean_bootstrap_width /= Trials
+	mean_bootstrap_mean /= Trials
+	fmt.Printf("\t%v samples, %v resamples:\n", CauchySamplesSmall, CauchyResamplesLarge)
 	fmt.Printf("\t\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
 	fmt.Printf("\t\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
 	fmt.Printf("\t\tmean bootstrap width: %f\n", mean_bootstrap_width)
