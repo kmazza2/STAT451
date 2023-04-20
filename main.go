@@ -28,6 +28,7 @@ func main() {
 		seed_rng.Next())
 	unif_rng := u2f.NewUint64toFloat64(&src_rng)
 	normal_rng := nrng.NewNormalrng(&unif_rng, 0, 1)
+	fmt.Println("Problem 1(b):")
 	analytic_ci_contains_param := 0.
 	mean_analytic_l := 0.
 	mean_analytic_u := 0.
@@ -59,10 +60,10 @@ func main() {
 	mean_analytic_l /= Trials
 	mean_analytic_u /= Trials
 	mean_analytic_width /= Trials
-	fmt.Printf("mean analytic lower bound: %f\n", mean_analytic_l)
-	fmt.Printf("mean analytic upper bound: %f\n", mean_analytic_u)
-	fmt.Printf("mean analytic width: %f\n", mean_analytic_width)
-	fmt.Printf("analytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
+	fmt.Printf("\tmean analytic lower bound: %f\n", mean_analytic_l)
+	fmt.Printf("\tmean analytic upper bound: %f\n", mean_analytic_u)
+	fmt.Printf("\tmean analytic width: %f\n", mean_analytic_width)
+	fmt.Printf("\tanalytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
 	// Calculate the confidence interval using paired bootstrap:
 	//empirical_beta_hat := make([]float64, Resamples)
 	bootstrap_ci_contains_param := 0.
@@ -102,10 +103,10 @@ func main() {
 	mean_bootstrap_l /= Trials
 	mean_bootstrap_u /= Trials
 	mean_bootstrap_width /= Trials
-	fmt.Printf("mean bootstrap lower bound: %f\n", mean_bootstrap_l)
-	fmt.Printf("mean bootstrap upper bound: %f\n", mean_bootstrap_u)
-	fmt.Printf("mean bootstrap width: %f\n", mean_bootstrap_width)
-	fmt.Printf("bootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
+	fmt.Printf("\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\tmean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\tbootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
 }
 
 func sum(s []float64) float64 {
