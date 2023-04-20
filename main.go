@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	cauchyrng "github.com/kmazza2/urn/cauchy"
 	drng "github.com/kmazza2/urn/dunif"
 	f64rng "github.com/kmazza2/urn/float64rng"
 	nrng "github.com/kmazza2/urn/normal"
@@ -18,6 +19,8 @@ const Resamples = 1000
 const Seed = 0
 const Beta = 2.
 const InvCdf = -1.959963984540054
+const CauchyResamplesSmall = 1000
+const CauchyResamplesLarge = 10000
 
 func main() {
 	seed_rng := sm64.NewSplitMix64(Seed)
@@ -28,6 +31,7 @@ func main() {
 		seed_rng.Next())
 	unif_rng := u2f.NewUint64toFloat64(&src_rng)
 	normal_rng := nrng.NewNormalrng(&unif_rng, 0, 1)
+	cauchy_rng := cauchyrng.NewCauchyrng(&unif_rng, 0., 1.)
 	fmt.Println("Problem 1(b):")
 	analytic_ci_contains_param := 0.
 	mean_analytic_l := 0.
@@ -107,6 +111,43 @@ func main() {
 	fmt.Printf("\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
 	fmt.Printf("\tmean bootstrap width: %f\n", mean_bootstrap_width)
 	fmt.Printf("\tbootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
+	fmt.Println("Problem 2(a):")
+	bootstrap_ci_contains_param = 0.
+	mean_bootstrap_l = 0.
+	mean_bootstrap_u = 0.
+	mean_bootstrap_width = 0.
+	mean_bootstrap_mean := 0.
+	resampled_cauchy_mean_dist := make([]float64, CauchyResamplesSmall)
+	for i := 0; i < Trials; i++ {
+		x := make([]float64, Samples)
+		for j := 0; j < Samples; j++ {
+			x[j] = cauchy_rng.Next()
+		}
+		for j := 0; j < CauchyResamplesSmall; j++ {
+			current_resample := resample1d(x, unif_rng)
+			resampled_cauchy_mean_dist[j] = sum(current_resample) / float64(len(current_resample))
+		}
+		sort.Sort(sort.Float64Slice(resampled_cauchy_mean_dist))
+		bootstrap_l := disc_quantile(0.025, resampled_cauchy_mean_dist)
+		bootstrap_u := disc_quantile(0.975, resampled_cauchy_mean_dist)
+		mean_bootstrap_l += bootstrap_l
+		mean_bootstrap_u += bootstrap_u
+		mean_bootstrap_width += bootstrap_u - bootstrap_l
+		if bootstrap_l <= 0 && 0 <= bootstrap_u {
+			bootstrap_ci_contains_param += 1.
+		}
+		mean_bootstrap_mean += sum(resampled_cauchy_mean_dist) / float64(len(resampled_cauchy_mean_dist))
+	}
+	mean_bootstrap_l /= Trials
+	mean_bootstrap_u /= Trials
+	mean_bootstrap_width /= Trials
+	mean_bootstrap_mean /= Trials
+	fmt.Printf("\t%v resamples:\n", CauchyResamplesSmall)
+	fmt.Printf("\t\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
+	fmt.Printf("\t\tbootstrap CI coverage (median): %f\n", bootstrap_ci_contains_param/Trials)
 }
 
 func sum(s []float64) float64 {
@@ -142,6 +183,15 @@ func t(x []float64) float64 {
 func resample(data []pair, src_rng f64rng.Float64rng) []pair {
 	dunif_rng := drng.NewDunifrng(src_rng, uint64(len(data)))
 	result := make([]pair, len(data))
+	for i := 0; i < len(data); i++ {
+		result[i] = data[dunif_rng.Next()-1]
+	}
+	return result
+}
+
+func resample1d(data []float64, src_rng f64rng.Float64rng) []float64 {
+	dunif_rng := drng.NewDunifrng(src_rng, uint64(len(data)))
+	result := make([]float64, len(data))
 	for i := 0; i < len(data); i++ {
 		result[i] = data[dunif_rng.Next()-1]
 	}
