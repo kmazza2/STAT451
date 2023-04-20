@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	cauchyrng "github.com/kmazza2/urn/cauchy"
+	cunif "github.com/kmazza2/urn/cunif"
 	drng "github.com/kmazza2/urn/dunif"
 	f64rng "github.com/kmazza2/urn/float64rng"
 	nrng "github.com/kmazza2/urn/normal"
@@ -23,6 +24,7 @@ const CauchySamplesSmall = 30
 const CauchySamplesLarge = 300
 const CauchyResamplesSmall = 1000
 const CauchyResamplesLarge = 10000
+const MaxTheta = 100
 
 func main() {
 	seed_rng := sm64.NewSplitMix64(Seed)
@@ -34,6 +36,7 @@ func main() {
 	unif_rng := u2f.NewUint64toFloat64(&src_rng)
 	normal_rng := nrng.NewNormalrng(&unif_rng, 0, 1)
 	cauchy_rng := cauchyrng.NewCauchyrng(&unif_rng, 0., 1.)
+	cunif_rng := cunif.NewCunifrng(&unif_rng, 0., MaxTheta)
 	fmt.Println("Problem 1(b):")
 	analytic_ci_contains_param := 0.
 	mean_analytic_l := 0.
@@ -52,8 +55,6 @@ func main() {
 		for j := 0; j < Samples; j++ {
 			y[j] = Beta*x[j] + e[j]
 		}
-		// The dataset has now been generated.
-		// Calculate the confidence interval analytically:
 		lower := beta1_hat(x, y) - t(x)
 		upper := beta1_hat(x, y) + t(x)
 		mean_analytic_l += lower
@@ -70,8 +71,6 @@ func main() {
 	fmt.Printf("\tmean analytic CI upper bound: %f\n", mean_analytic_u)
 	fmt.Printf("\tmean analytic CI width: %f\n", mean_analytic_width)
 	fmt.Printf("\tanalytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
-	// Calculate the confidence interval using paired bootstrap:
-	//empirical_beta_hat := make([]float64, Resamples)
 	bootstrap_ci_contains_param := 0.
 	mean_bootstrap_l := 0.
 	mean_bootstrap_u := 0.
@@ -109,11 +108,12 @@ func main() {
 	mean_bootstrap_l /= Trials
 	mean_bootstrap_u /= Trials
 	mean_bootstrap_width /= Trials
-	fmt.Printf("\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
-	fmt.Printf("\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
-	fmt.Printf("\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
-	fmt.Printf("\tbootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
-	fmt.Println("Problem 2(a):")
+	fmt.Printf("\t%v samples, %v resamples:\n", Samples, Resamples)
+	fmt.Printf("\t\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tbootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
+	fmt.Println("Problem 2(a): (MEDIAN IS 0)")
 	bootstrap_ci_contains_param = 0.
 	mean_bootstrap_l = 0.
 	mean_bootstrap_u = 0.
@@ -222,6 +222,44 @@ func main() {
 	fmt.Printf("\t\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
 	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
 	fmt.Printf("\t\tbootstrap CI coverage (median): %f\n", bootstrap_ci_contains_param/Trials)
+	fmt.Printf("Problem 2(b): (THETA = %v)\n", MaxTheta)
+	mean_bootstrap_l = 0.
+	mean_bootstrap_u = 0.
+	mean_bootstrap_width = 0.
+	mean_bootstrap_mean = 0.
+	resampled_cunif_max_dist := make([]float64, Resamples)
+	for i := 0; i < Trials; i++ {
+		x := make([]float64, Samples)
+		for j := 0; j < Samples; j++ {
+			x[j] = cunif_rng.Next()
+		}
+		for j := 0; j < Resamples; j++ {
+			current_resample := resample1d(x, unif_rng)
+			max := current_resample[0]
+			for k := 0; k < len(current_resample); k++ {
+				if max < current_resample[k] {
+					max = current_resample[k]
+				}
+			}
+			resampled_cunif_max_dist[j] = max
+		}
+		sort.Sort(sort.Float64Slice(resampled_cunif_max_dist))
+		bootstrap_l := disc_quantile(0.025, resampled_cunif_max_dist)
+		bootstrap_u := disc_quantile(0.975, resampled_cunif_max_dist)
+		mean_bootstrap_l += bootstrap_l
+		mean_bootstrap_u += bootstrap_u
+		mean_bootstrap_width += bootstrap_u - bootstrap_l
+		mean_bootstrap_mean += sum(resampled_cunif_max_dist) / float64(len(resampled_cunif_max_dist))
+	}
+	mean_bootstrap_l /= Trials
+	mean_bootstrap_u /= Trials
+	mean_bootstrap_width /= Trials
+	mean_bootstrap_mean /= Trials
+	fmt.Printf("\t%v samples, %v resamples:\n", Samples, Resamples)
+	fmt.Printf("\t\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
 }
 
 func sum(s []float64) float64 {
