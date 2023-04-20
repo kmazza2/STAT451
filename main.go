@@ -32,6 +32,39 @@ func main() {
 	mean_analytic_l := 0.
 	mean_analytic_u := 0.
 	mean_analytic_width := 0.
+	for i := 0; i < Trials; i++ {
+		y := make([]float64, Samples)
+		x := make([]float64, Samples)
+		e := make([]float64, Samples)
+		for j := 0; j < Samples; j++ {
+			x[j] = unif_rng.Next()
+		}
+		for j := 0; j < Samples; j++ {
+			e[j] = normal_rng.Next()
+		}
+		for j := 0; j < Samples; j++ {
+			y[j] = Beta*x[j] + e[j]
+		}
+		// The dataset has now been generated.
+		// Calculate the confidence interval analytically:
+		lower := beta1_hat(x, y) - t(x)
+		upper := beta1_hat(x, y) + t(x)
+		mean_analytic_l += lower
+		mean_analytic_u += upper
+		mean_analytic_width += upper - lower
+		if lower <= Beta && Beta <= upper {
+			analytic_ci_contains_param += 1.
+		}
+	}
+	mean_analytic_l /= Trials
+	mean_analytic_u /= Trials
+	mean_analytic_width /= Trials
+	fmt.Printf("mean analytic lower bound: %f\n", mean_analytic_l)
+	fmt.Printf("mean analytic upper bound: %f\n", mean_analytic_u)
+	fmt.Printf("mean analytic width: %f\n", mean_analytic_width)
+	fmt.Printf("analytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
+	// Calculate the confidence interval using paired bootstrap:
+	//empirical_beta_hat := make([]float64, Resamples)
 	bootstrap_ci_contains_param := 0.
 	mean_bootstrap_l := 0.
 	mean_bootstrap_u := 0.
@@ -51,18 +84,6 @@ func main() {
 			y[j] = Beta*x[j] + e[j]
 		}
 		zipped_dataset := zip(x, y)
-		// The dataset has now been generated.
-		// Calculate the confidence interval analytically:
-		lower := beta1_hat(x, y) - t(x)
-		upper := beta1_hat(x, y) + t(x)
-		mean_analytic_l += lower
-		mean_analytic_u += upper
-		mean_analytic_width += upper - lower
-		if lower <= Beta && Beta <= upper {
-			analytic_ci_contains_param += 1.
-		}
-		// Calculate the confidence interval using paired bootstrap:
-		//empirical_beta_hat := make([]float64, Resamples)
 		for j := 0; j < Resamples; j++ {
 			current_resample := resample(zipped_dataset, unif_rng)
 			resample_x, resample_y := unzip(current_resample)
@@ -78,16 +99,9 @@ func main() {
 			bootstrap_ci_contains_param += 1.
 		}
 	}
-	mean_analytic_l /= Trials
-	mean_analytic_u /= Trials
-	mean_analytic_width /= Trials
 	mean_bootstrap_l /= Trials
 	mean_bootstrap_u /= Trials
 	mean_bootstrap_width /= Trials
-	fmt.Printf("mean analytic lower bound: %f\n", mean_analytic_l)
-	fmt.Printf("mean analytic upper bound: %f\n", mean_analytic_u)
-	fmt.Printf("mean analytic width: %f\n", mean_analytic_width)
-	fmt.Printf("analytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
 	fmt.Printf("mean bootstrap lower bound: %f\n", mean_bootstrap_l)
 	fmt.Printf("mean bootstrap upper bound: %f\n", mean_bootstrap_u)
 	fmt.Printf("mean bootstrap width: %f\n", mean_bootstrap_width)
