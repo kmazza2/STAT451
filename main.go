@@ -28,10 +28,14 @@ func main() {
 		seed_rng.Next())
 	unif_rng := u2f.NewUint64toFloat64(&src_rng)
 	normal_rng := nrng.NewNormalrng(&unif_rng, 0, 1)
-	ci_contains_param := 0.
+	analytic_ci_contains_param := 0.
 	mean_analytic_l := 0.
 	mean_analytic_u := 0.
 	mean_analytic_width := 0.
+	bootstrap_ci_contains_param := 0.
+	mean_bootstrap_l := 0.
+	mean_bootstrap_u := 0.
+	mean_bootstrap_width := 0.
 	resampled_beta1_hat_dist := make([]float64, Resamples)
 	for i := 0; i < Trials; i++ {
 		y := make([]float64, Samples)
@@ -55,7 +59,7 @@ func main() {
 		mean_analytic_u += upper
 		mean_analytic_width += upper - lower
 		if lower <= Beta && Beta <= upper {
-			ci_contains_param += 1.
+			analytic_ci_contains_param += 1.
 		}
 		// Calculate the confidence interval using paired bootstrap:
 		//empirical_beta_hat := make([]float64, Resamples)
@@ -65,14 +69,29 @@ func main() {
 			resampled_beta1_hat_dist[j] = beta1_hat(resample_x, resample_y)
 		}
 		sort.Sort(sort.Float64Slice(resampled_beta1_hat_dist))
+		bootstrap_l := disc_quantile(0.025, resampled_beta1_hat_dist)
+		bootstrap_u := disc_quantile(0.975, resampled_beta1_hat_dist)
+		mean_bootstrap_l += bootstrap_l
+		mean_bootstrap_u += bootstrap_u
+		mean_bootstrap_width += bootstrap_u - bootstrap_l
+		if bootstrap_l <= Beta && Beta <= bootstrap_u {
+			bootstrap_ci_contains_param += 1.
+		}
 	}
 	mean_analytic_l /= Trials
 	mean_analytic_u /= Trials
 	mean_analytic_width /= Trials
+	mean_bootstrap_l /= Trials
+	mean_bootstrap_u /= Trials
+	mean_bootstrap_width /= Trials
 	fmt.Printf("mean analytic lower bound: %f\n", mean_analytic_l)
 	fmt.Printf("mean analytic upper bound: %f\n", mean_analytic_u)
 	fmt.Printf("mean analytic width: %f\n", mean_analytic_width)
-	fmt.Printf("analytic CI coverage: %f\n", ci_contains_param/Trials)
+	fmt.Printf("analytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
+	fmt.Printf("mean bootstrap lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("mean bootstrap upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("mean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("bootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
 }
 
 func sum(s []float64) float64 {
@@ -145,10 +164,10 @@ func disc_quantile(p float64, sorted_data []float64) float64 {
 		panic("p must be in (0, 1)")
 	}
 	n := float64(len(sorted_data))
-	if p < 1. / n {
-		return n * p - 1. + sorted_data[0]
+	if p < 1./n {
+		return n*p - 1. + sorted_data[0]
 	} else {
-		i := math.Floor(float64(n) * p - 1)
-		return sorted_data[int(i)] + (n * p - i - 1) * (sorted_data[int(i) + 1] - sorted_data[int(i)])
+		i := math.Floor(float64(n)*p - 1)
+		return sorted_data[int(i)] + (n*p-i-1)*(sorted_data[int(i)+1]-sorted_data[int(i)])
 	}
 }
