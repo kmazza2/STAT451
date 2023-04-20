@@ -139,3 +139,16 @@ func unzip(zipped_data []pair) ([]float64, []float64) {
 	}
 	return x, y
 }
+
+func disc_quantile(p float64, sorted_data []float64) float64 {
+	if p <= 0 || p >= 1 {
+		panic("p must be in (0, 1)")
+	}
+	n := float64(len(sorted_data))
+	if p < 1. / n {
+		return n * p - 1. + sorted_data[0]
+	} else {
+		i := math.Floor(float64(n) * p - 1)
+		return sorted_data[int(i)] + (n * p - i - 1) * (sorted_data[int(i) + 1] - sorted_data[int(i)])
+	}
+}
