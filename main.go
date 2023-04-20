@@ -20,7 +20,7 @@ const Seed = 0
 const Beta = 2.
 const InvCdf = -1.959963984540054
 const CauchySamplesSmall = 30
-const CauchySamplesLarge = 100
+const CauchySamplesLarge = 300
 const CauchyResamplesSmall = 1000
 const CauchyResamplesLarge = 10000
 
@@ -66,9 +66,9 @@ func main() {
 	mean_analytic_l /= Trials
 	mean_analytic_u /= Trials
 	mean_analytic_width /= Trials
-	fmt.Printf("\tmean analytic lower bound: %f\n", mean_analytic_l)
-	fmt.Printf("\tmean analytic upper bound: %f\n", mean_analytic_u)
-	fmt.Printf("\tmean analytic width: %f\n", mean_analytic_width)
+	fmt.Printf("\tmean analytic CI lower bound: %f\n", mean_analytic_l)
+	fmt.Printf("\tmean analytic CI upper bound: %f\n", mean_analytic_u)
+	fmt.Printf("\tmean analytic CI width: %f\n", mean_analytic_width)
 	fmt.Printf("\tanalytic CI coverage: %f\n", analytic_ci_contains_param/Trials)
 	// Calculate the confidence interval using paired bootstrap:
 	//empirical_beta_hat := make([]float64, Resamples)
@@ -109,9 +109,9 @@ func main() {
 	mean_bootstrap_l /= Trials
 	mean_bootstrap_u /= Trials
 	mean_bootstrap_width /= Trials
-	fmt.Printf("\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
-	fmt.Printf("\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
-	fmt.Printf("\tmean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
 	fmt.Printf("\tbootstrap CI coverage: %f\n", bootstrap_ci_contains_param/Trials)
 	fmt.Println("Problem 2(a):")
 	bootstrap_ci_contains_param = 0.
@@ -145,9 +145,9 @@ func main() {
 	mean_bootstrap_width /= Trials
 	mean_bootstrap_mean /= Trials
 	fmt.Printf("\t%v samples, %v resamples:\n", CauchySamplesSmall, CauchyResamplesSmall)
-	fmt.Printf("\t\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
-	fmt.Printf("\t\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
-	fmt.Printf("\t\tmean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
 	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
 	fmt.Printf("\t\tbootstrap CI coverage (median): %f\n", bootstrap_ci_contains_param/Trials)
 	bootstrap_ci_contains_param = 0.
@@ -181,9 +181,45 @@ func main() {
 	mean_bootstrap_width /= Trials
 	mean_bootstrap_mean /= Trials
 	fmt.Printf("\t%v samples, %v resamples:\n", CauchySamplesSmall, CauchyResamplesLarge)
-	fmt.Printf("\t\tmean bootstrap lower bound: %f\n", mean_bootstrap_l)
-	fmt.Printf("\t\tmean bootstrap upper bound: %f\n", mean_bootstrap_u)
-	fmt.Printf("\t\tmean bootstrap width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
+	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
+	fmt.Printf("\t\tbootstrap CI coverage (median): %f\n", bootstrap_ci_contains_param/Trials)
+	bootstrap_ci_contains_param = 0.
+	mean_bootstrap_l = 0.
+	mean_bootstrap_u = 0.
+	mean_bootstrap_width = 0.
+	mean_bootstrap_mean = 0.
+	resampled_cauchy_mean_dist = make([]float64, CauchyResamplesSmall)
+	for i := 0; i < Trials; i++ {
+		x := make([]float64, CauchySamplesLarge)
+		for j := 0; j < CauchySamplesLarge; j++ {
+			x[j] = cauchy_rng.Next()
+		}
+		for j := 0; j < CauchyResamplesSmall; j++ {
+			current_resample := resample1d(x, unif_rng)
+			resampled_cauchy_mean_dist[j] = sum(current_resample) / float64(len(current_resample))
+		}
+		sort.Sort(sort.Float64Slice(resampled_cauchy_mean_dist))
+		bootstrap_l := disc_quantile(0.025, resampled_cauchy_mean_dist)
+		bootstrap_u := disc_quantile(0.975, resampled_cauchy_mean_dist)
+		mean_bootstrap_l += bootstrap_l
+		mean_bootstrap_u += bootstrap_u
+		mean_bootstrap_width += bootstrap_u - bootstrap_l
+		if bootstrap_l <= 0 && 0 <= bootstrap_u {
+			bootstrap_ci_contains_param += 1.
+		}
+		mean_bootstrap_mean += sum(resampled_cauchy_mean_dist) / float64(len(resampled_cauchy_mean_dist))
+	}
+	mean_bootstrap_l /= Trials
+	mean_bootstrap_u /= Trials
+	mean_bootstrap_width /= Trials
+	mean_bootstrap_mean /= Trials
+	fmt.Printf("\t%v samples, %v resamples:\n", CauchySamplesLarge, CauchyResamplesSmall)
+	fmt.Printf("\t\tmean bootstrap CI lower bound: %f\n", mean_bootstrap_l)
+	fmt.Printf("\t\tmean bootstrap CI upper bound: %f\n", mean_bootstrap_u)
+	fmt.Printf("\t\tmean bootstrap CI width: %f\n", mean_bootstrap_width)
 	fmt.Printf("\t\tbootstrap mean: %f\n", mean_bootstrap_mean)
 	fmt.Printf("\t\tbootstrap CI coverage (median): %f\n", bootstrap_ci_contains_param/Trials)
 }
